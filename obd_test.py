@@ -1,4 +1,5 @@
 import obd
+import time
 loop = True
 connection = obd.OBD(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
@@ -8,3 +9,4 @@ while True:
     response = connection.query(cmd)
 
     print(response.value) 
+    time.sleep(1)
