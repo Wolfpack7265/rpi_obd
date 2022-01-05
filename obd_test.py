@@ -1,9 +1,9 @@
-import obd 
+import obd
 
-ports = obd.scan_serial()                         
-connection = obd.OBD(ports[0])
+connection = obd.OBD(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
-cmd= obd.commands.SPEED
+
+cmd= obd.commands.RPM
 
 response = connection.query(cmd)
 
