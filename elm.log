@@ -1,7 +1,0 @@
-2022-01-04 22:21:59,855  root       run        INFO     
-
-ELM327 OBD-II adapter emulator v3.0.0 started on Windows serial COM port "COM3".
-
-2022-01-04 22:21:59,862  root       connect_serial CRITICAL Error while opening serial COM 'COM3':
-could not open port 'COM3': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
-2022-01-04 22:21:59,862  root       terminate  DEBUG    Start termination procedure.

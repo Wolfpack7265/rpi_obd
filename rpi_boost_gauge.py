@@ -3,7 +3,7 @@ from obd import OBDCommand, Unit
 from obd.protocols import ECU
 from obd.utils import bytes_to_int
 
-connection = obd.OBD()
+connection = obd.OBD(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def boost(messages):
     """decoder for boost messages"""
