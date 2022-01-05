@@ -13,7 +13,7 @@ def boost(messages):
     return v * Unit.Turbocharger 
 
 boost_pressure = OBDCommand("Turbocharger compressor inlet pressure",
-"Turbo pressure", "016F", 3, boost, ECU.ALL, True)
+"Turbo pressure", b"016F", 3, boost, ECU.ALL, True)
 
 connection.supported_commands.add(boost_pressure)
 response = connection.query(boost_pressure)
