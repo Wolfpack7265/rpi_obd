@@ -7,12 +7,11 @@ loop = True
 connection = obd.OBD(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 intake = obd.commands.INTAKE_PRESSURE
 barometric = obd.commands.BAROMETRIC_PRESSURE
-psi = 0.145038
 
 while True:
    
     intake_response = connection.query(intake)
     barometric_response = connection.query(barometric)
-    boost = (intake_response.value - barometric_response.value) * psi
-    print(boost) 
+    boost = -(intake_response.value.magnitude - barometric_response.value.magnitude)*0.145038 #units of kilopascals tp psi
+    print(round(boost, 2)) # float is truncated to 2 decimals with round()
     time.sleep(1)
