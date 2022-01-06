@@ -11,7 +11,7 @@ def oil_temp(messages):
     d = messages[0].data
     d = d[2:]
     v = bytes_to_int(d) / 1.0
-    return v 
+    return v * Unit.celsius
 
 oil_temperature = OBDCommand("Engine oil temperature", 
 "oil temperature", b"015C", 1, oil_temp, ECU.ALL,  False)
