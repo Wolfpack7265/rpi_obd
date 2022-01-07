@@ -57,7 +57,10 @@ while True:
     boost = round(boost, 2) # float is truncated to 2 decimals with round()
     temp = (boost - min_boost)/(max_boost - min_boost)
     arc_length = (temp*(max_gauge - min_gauge))+ min_gauge
-    
+    canvas.delete("all")
+    canvas.create_circle_arc(240, 240, 210, style="arc", outline="white", width=40,
+    start=270-50, end=270+50)
+    canvas.create_circle(240, 240, 230, fill="black", outline="grey", width=4)
     canvas.create_circle_arc(240, 240, 210, style="arc", outline="red", width=40, start=220, end=arc_length)
     canvas.update()
     canvas.update_idletasks()
@@ -65,6 +68,6 @@ while True:
     print(boost) 
     print(arc_length)
     
-    time.sleep(0.5)
+    time.sleep(0.1)
 
 
