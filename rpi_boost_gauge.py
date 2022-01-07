@@ -12,6 +12,6 @@ while True:
    
     intake_response = connection.query(intake)
     barometric_response = connection.query(barometric)
-    boost = -(intake_response.value.magnitude - barometric_response.value.magnitude)*0.145038 #units of kilopascals tp psi
+    boost = (intake_response.value.magnitude - barometric_response.value.magnitude)*0.145038 #units of kilopascals tp psi
     print(round(boost, 2)) # float is truncated to 2 decimals with round()
     time.sleep(1)
