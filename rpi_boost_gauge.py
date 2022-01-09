@@ -23,6 +23,7 @@ gauge_color = "grey15"
 grey_zone_color = "grey30"
 nominal_color = "DarkOrange1"
 red_zone_color = "red"
+startup = 1
 root = tk.Tk()
 canvas = tk.Canvas(root, width=480, height=480, borderwidth=0, highlightthickness=0,
 bg="black")
@@ -45,19 +46,21 @@ def _create_circle_arc(self, x, y, r, **kwargs):
 tk.Canvas.create_circle_arc = _create_circle_arc
 
 canvas.create_circle(240, 240, 230, fill="black", outline="grey", width=4)
-
-
-
 canvas.pack()
 
+JEM = tk.PhotoImage(file="JEM_logo.PNG")
+canvas.create_image(240, 240, image = JEM )
 
 
+
+if startup == 1:
+    
 
 while True:
     
     intake_response = connection.query(intake)
     barometric_response = connection.query(barometric)
-    boost = ((intake_response.value.magnitude - barometric_response.value.magnitude)*0.145038) +10 #units of kilopascals tp psi
+    boost = ((intake_response.value.magnitude - barometric_response.value.magnitude)*0.145038)  #units of kilopascals tp psi
     boost = round(boost, 2) # float is truncated to 2 decimals with round()
     temp = (boost - min_boost)/(max_boost - min_boost)
     grey_zone_arc = (grey_zone - min_boost)/(max_boost - min_boost)
@@ -103,7 +106,7 @@ while True:
         lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=max_gauge +5, end=max_gauge-1) #leading arc for aesthetics
         
     
-    boost_text = canvas.create_text(240, 240, text=boost, fill="white", font=("ds-digital", 90, 'bold'))
+    boost_text = canvas.create_text(240, 240, text=boost, fill="white", font=("ds-digital", 100, 'bold'))
     canvas.update()
     canvas.update_idletasks()
 
