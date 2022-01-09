@@ -9,12 +9,12 @@ import tkinter as tk
 from tkinter import Label, filedialog, Text 
 import tkinter.ttk
 import os 
-
 loop = False
 gauge_sweep_bool = False
 connection = obd.OBD(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 intake = obd.commands.INTAKE_PRESSURE
 barometric = obd.commands.BAROMETRIC_PRESSURE
+oil_temp = obd.commands.OIL_TEMP
 max_boost = 10.0
 min_boost = -10
 min_gauge = 220
@@ -70,11 +70,10 @@ while loop == False:
         canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
         lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=gauge_sweep_1 , end= gauge_sweep_1-1)
         boost_arc_1 = canvas.create_circle_arc(240, 240, 205, style="arc", outline="grey", width=50, start=220, end= gauge_sweep_1)
-        
         canvas.update()
         canvas.update_idletasks()
-        canvas.delete(boost_arc_1)
         canvas.delete(lead_arc)
+        canvas.delete(boost_arc_1)
 
     elif gauge_sweep_1 == -40 and gauge_sweep_2 >= -40 and gauge_sweep_2 <=215:
         gauge_sweep_2 = (gauge_sweep_2 +5)
@@ -86,8 +85,9 @@ while loop == False:
         boost_arc_1 = canvas.create_circle_arc(240, 240, 205, style="arc", outline="grey", width=50, start=220, end= gauge_sweep_2)
         canvas.update()
         canvas.update_idletasks()
-        canvas.delete(boost_arc_1)
         canvas.delete(lead_arc)
+        canvas.delete(boost_arc_1)
+        
     elif gauge_sweep_1 == -40 and gauge_sweep_2 == 220:
        
         canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
@@ -154,7 +154,7 @@ while loop ==True:
         
     
     boost_text = canvas.create_text(240, 240, text=boost, fill="white", font=("ds-digital", 100, 'bold'))
-    other_text = canvas.create_text(240, 400, text=boost, fill="white", font=("ds-digital", 40, 'bold'))
+   # other_text = canvas.create_text(240, 400, text=oil_temp, fill="white", font=("ds-digital", 40, 'bold'))
     canvas.update()
     canvas.update_idletasks()
 
@@ -162,6 +162,7 @@ while loop ==True:
     print(arc_length_1)
     print(arc_length_2)
     print(arc_length_3)
+   # print(oil_temp)
     canvas.delete(boost_arc_1)
     canvas.delete(boost_arc_2)
     canvas.delete(boost_arc_3)
