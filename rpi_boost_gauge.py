@@ -92,7 +92,7 @@ while loop == False:
         
 
     elif gauge_sweep_1 == -40 and gauge_sweep_2 >= -40 and gauge_sweep_2 <=215:
-        gauge_sweep_2 = (gauge_sweep_2 +10)
+        gauge_sweep_2 = (gauge_sweep_2 + 20)
         canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
         canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start=220, end=-40)
         canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= arc_length_1)
