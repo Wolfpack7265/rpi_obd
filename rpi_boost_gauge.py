@@ -181,16 +181,16 @@ while loop ==True:
     canvas.update()
     canvas.update_idletasks()
 
-    print(boost) 
-    print(arc_length_1)
-    print(arc_length_2)
-    print(arc_length_3)
+   # print(boost) 
+    #print(arc_length_1)
+    #print(arc_length_2)
+    #print(arc_length_3)
    # print(oil_temp)
     canvas.delete(boost_arc_1)
     canvas.delete(boost_arc_2)
     canvas.delete(boost_arc_3)
     canvas.delete(boost_text)
     canvas.delete(lead_arc)
-    time.sleep(0.5)
+    time.sleep(0.10)
 
 
