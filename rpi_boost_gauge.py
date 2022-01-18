@@ -197,7 +197,7 @@ while loop ==True:
     canvas.update()
     canvas.update_idletasks()
 
-    print(boost) 
+    #print(boost) 
     #print(arc_length_1)
     #print(arc_length_2)
     #print(arc_length_3)
