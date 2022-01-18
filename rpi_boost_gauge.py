@@ -73,44 +73,58 @@ while loop == False:
         canvas.delete(ALL)
         gauge_sweep_bool = True
     elif gauge_sweep_1 > -40:
-        gauge_sweep_1 = (gauge_sweep_1 -10)
-        canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
-        #canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start=220, end=-40)
-        canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= arc_length_1)
-        canvas.create_circle_arc(240, 240, 180, style="arc", outline= nominal_color, width=4, start= arc_length_1, end= arc_length_2)
-        canvas.create_circle_arc(240, 240, 180, style="arc", outline= red_zone_color, width=4, start= arc_length_2, end=-40)
-        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
-        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
+        gauge_sweep_1 = (gauge_sweep_1 -0.19)
+        
         if gauge_sweep_1 ==0:
+            canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= arc_length_1)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= nominal_color, width=4, start= arc_length_1, end= arc_length_2)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= red_zone_color, width=4, start= arc_length_2, end=-40)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=2 , end= 2 -1)
         else:
+            canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= arc_length_1)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= nominal_color, width=4, start= arc_length_1, end= arc_length_2)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= red_zone_color, width=4, start= arc_length_2, end=-40)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=gauge_sweep_1 , end= gauge_sweep_1-1)
         
         canvas.update()
         canvas.update_idletasks()
-        canvas.delete(lead_arc)
+        canvas.delete(ALL)
         
 
-    elif gauge_sweep_1 == -40 and gauge_sweep_2 >= -40 and gauge_sweep_2 <=215:
-        gauge_sweep_2 = (gauge_sweep_2 + 20)
-        canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
-        canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start=220, end=-40)
-        canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= arc_length_1)
-        canvas.create_circle_arc(240, 240, 180, style="arc", outline= nominal_color, width=4, start= arc_length_1, end= arc_length_2)
-        canvas.create_circle_arc(240, 240, 180, style="arc", outline= red_zone_color, width=4, start= arc_length_2, end=-40)
-        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
-        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
+    elif gauge_sweep_1 <= -40 and gauge_sweep_2 >= -40 and gauge_sweep_2 <=220:
+        gauge_sweep_2 = (gauge_sweep_2 + 0.19)
+      
         if gauge_sweep_2 ==0:
+            canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start=220, end=-40)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= arc_length_1)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= nominal_color, width=4, start= arc_length_1, end= arc_length_2)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= red_zone_color, width=4, start= arc_length_2, end=-40)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=2 , end= 2 -1)
         else:
+            canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start=220, end=-40)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= arc_length_1)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= nominal_color, width=4, start= arc_length_1, end= arc_length_2)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= red_zone_color, width=4, start= arc_length_2, end=-40)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=gauge_sweep_2 , end= gauge_sweep_2-1)
        
         canvas.update()
         canvas.update_idletasks()
-        canvas.delete(lead_arc)
+        canvas.delete(ALL)
         
         
-    elif gauge_sweep_1 == -40 and gauge_sweep_2 == 220:
+    elif gauge_sweep_1 <= -40 and gauge_sweep_2 >= 220:
        
         canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
         canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start=220, end=-40)
@@ -125,13 +139,14 @@ while loop == False:
         canvas.update()
         canvas.update_idletasks()
         loop = True
+      
    
 
 while loop ==True:
     
     intake_response = connection.query(intake)
     barometric_response = connection.query(barometric)
-    boost = ((intake_response.value.magnitude - barometric_response.value.magnitude)*0.145038) + 10   #units of kilopascals to psi
+    boost = ((intake_response.value.magnitude - barometric_response.value.magnitude)*0.145038) + 5   #units of kilopascals to psi
     boost = round(boost, 2) # float is truncated to 2 decimals with round()
     temp = (boost - min_boost)/(max_boost - min_boost)
     
@@ -181,16 +196,16 @@ while loop ==True:
     canvas.update()
     canvas.update_idletasks()
 
-   # print(boost) 
+    print(boost) 
     #print(arc_length_1)
     #print(arc_length_2)
     #print(arc_length_3)
-   # print(oil_temp)
+    #print(oil_temp)
     canvas.delete(boost_arc_1)
     canvas.delete(boost_arc_2)
     canvas.delete(boost_arc_3)
     canvas.delete(boost_text)
     canvas.delete(lead_arc)
-    time.sleep(0.10)
+    time.sleep(0.150)
 
 
