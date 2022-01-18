@@ -73,7 +73,7 @@ while loop == False:
         canvas.delete(ALL)
         gauge_sweep_bool = True
     elif gauge_sweep_1 > -40:
-        gauge_sweep_1 = (gauge_sweep_1 -5)
+        gauge_sweep_1 = (gauge_sweep_1 -2)
         
         if gauge_sweep_1 ==0:
             canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
@@ -98,7 +98,7 @@ while loop == False:
         
 
     elif gauge_sweep_1 <= -40 and gauge_sweep_2 >= -40 and gauge_sweep_2 <=220:
-        gauge_sweep_2 = (gauge_sweep_2 + 5)
+        gauge_sweep_2 = (gauge_sweep_2 + 2)
       
         if gauge_sweep_2 ==0:
             canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
