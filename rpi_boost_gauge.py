@@ -167,6 +167,7 @@ while loop ==True:
     
     
     if boost <= min_boost:
+        
         lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=min_gauge -1, end=min_gauge) #leading arc for aesthetics
         
     elif boost < grey_zone:
@@ -201,11 +202,11 @@ while loop ==True:
     #print(arc_length_2)
     #print(arc_length_3)
     #print(oil_temp)
-    canvas.delete(boost_arc_1)
-    canvas.delete(boost_arc_2)
-    canvas.delete(boost_arc_3)
-    canvas.delete(boost_text)
-    canvas.delete(lead_arc)
+    #canvas.delete(boost_arc_1)
+    #canvas.delete(boost_arc_2)
+    #canvas.delete(boost_arc_3)
+    #canvas.delete(boost_text)
+    canvas.delete(ALL)
     time.sleep(0.150)
 
 
