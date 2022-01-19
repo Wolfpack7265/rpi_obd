@@ -13,7 +13,7 @@ import os
 loop = False
 gauge_sweep_bool = False
 #connection = obd.OBD(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False) 
-connection = obd.OBD()
+connection = obd.OBD(protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False)
 intake = obd.commands.INTAKE_PRESSURE
 barometric = obd.commands.BAROMETRIC_PRESSURE
 oil_temp = obd.commands.OIL_TEMP
