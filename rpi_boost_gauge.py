@@ -1,7 +1,6 @@
 from tkinter.constants import ALL, NONE
 from tkinter.font import BOLD
 import obd
-obd.chdir('/home/pi/.local/lib/python3.9/site-packages')
 import time
 from obd import OBDCommand, Unit
 from obd.protocols import ECU
