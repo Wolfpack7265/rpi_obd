@@ -10,6 +10,10 @@ from tkinter import Label, filedialog, Text
 import tkinter.ttk
 import os 
 
+if os.environ.get('DISPLAY','') == '':
+    print('no display found. Using :0.0')
+    os.environ.__setitem__('DISPLAY', ':0.0')
+    
 loop = False
 gauge_sweep_bool = False
 #connection = obd.OBD(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False) 
