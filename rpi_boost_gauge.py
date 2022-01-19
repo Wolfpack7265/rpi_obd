@@ -9,15 +9,16 @@ import tkinter as tk
 from tkinter import Label, filedialog, Text 
 import tkinter.ttk
 import os 
-
+import sys
 if os.environ.get('DISPLAY','') == '':
     print('no display found. Using :0.0')
     os.environ.__setitem__('DISPLAY', ':0.0')
-    
+
+
 loop = False
 gauge_sweep_bool = False
-#connection = obd.OBD(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False) 
-connection = obd.OBD(protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False)
+connection = obd.OBD(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False) 
+#connection = obd.OBD(protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False)
 intake = obd.commands.INTAKE_PRESSURE
 barometric = obd.commands.BAROMETRIC_PRESSURE
 oil_temp = obd.commands.OIL_TEMP
@@ -42,6 +43,7 @@ arc_length_2 = ((red_zone_arc*(max_gauge - min_gauge))+ min_gauge)
 arc_length_2 = round(arc_length_2, 2)
 
 root = tk.Tk()
+root.attributes('-fullscreen', True)
 canvas = tk.Canvas(root, width=480, height=480, borderwidth=0, highlightthickness=0,
 bg="black")
 
@@ -66,6 +68,12 @@ tk.Canvas.create_circle_arc = _create_circle_arc
 canvas.pack()
 
 JEM = tk.PhotoImage(file="JEM logo.gif")
+
+def close(event):
+    root.withdraw() # if you want to bring it back
+    sys.exit() # if you want to exit the entire thing
+
+
   
 
 while loop == False:
@@ -147,7 +155,7 @@ while loop == False:
    
 
 while loop ==True:
-    
+    root.bind('<Escape>', close)
     intake_response = connection.query(intake)
     barometric_response = connection.query(barometric)
     boost = ((intake_response.value.magnitude - barometric_response.value.magnitude)*0.145038) + 5   #units of kilopascals to psi
