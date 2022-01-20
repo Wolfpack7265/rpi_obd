@@ -19,9 +19,10 @@ if os.environ.get('DISPLAY','') == '':
 
 loop = False
 gauge_sweep_bool = False
-#connection = obd.OBD(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False) 
-ports = obd.scan_serial()
-connection = obd.OBD(ports[0])
+connection = obd.OBD(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False) 
+#ports = obd.scan_serial()
+#print(ports)
+connection = obd.OBD()
 intake = obd.commands.INTAKE_PRESSURE
 barometric = obd.commands.BAROMETRIC_PRESSURE
 oil_temp = obd.commands.OIL_TEMP
@@ -161,8 +162,9 @@ while loop ==True:
     root.bind('<Escape>', close)
     intake_response = connection.query(intake)
     barometric_response = connection.query(barometric)
-    boost = ((intake_response.value.magnitude - barometric_response.value.magnitude)*0.145038) + 5   #units of kilopascals to psi
+    boost = ((intake_response.value.magnitude - barometric_response.value.magnitude)*0.145038)   #units of kilopascals to psi
     boost = round(boost, 2) # float is truncated to 2 decimals with round()
+    # oil_temp = round(oil_temp, 2)
     temp = (boost - min_boost)/(max_boost - min_boost)
     
     arc_length_3 = ((temp*(max_gauge - min_gauge))+ min_gauge)
@@ -208,7 +210,7 @@ while loop ==True:
         
     
     boost_text = canvas.create_text(240, 240, text=boost, fill="white", font=("ds-digital", 100, 'bold'))
-    other_text = canvas.create_text(240, 400, text=oil_temp, fill="white", font=("ds-digital", 40, 'bold'))
+    # other_text = canvas.create_text(240, 400, text=oil_temp, fill="white", font=("ds-digital", 40, 'bold'))
     canvas.update()
     canvas.update_idletasks()
 
@@ -222,6 +224,6 @@ while loop ==True:
     #canvas.delete(boost_arc_3)
     #canvas.delete(boost_text)
     canvas.delete(ALL)
-    time.sleep(0.150)
+    time.sleep(0.100)
 
 
