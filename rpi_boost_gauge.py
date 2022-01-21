@@ -10,16 +10,17 @@ from tkinter import Label, filedialog, Text
 import tkinter.ttk
 import os 
 import sys
-from bluetooth import * 
+#from bluetooth import * 
 
-if os.environ.get('DISPLAY','') == '':
+"""if os.environ.get('DISPLAY','') == '':
     print('no display found. Using :0.0')
-    os.environ.__setitem__('DISPLAY', ':0.0')
+    os.environ.__setitem__('DISPLAY', ':0.0')"""
 
 
 loop = False
 gauge_sweep_bool = False
-connection = obd.OBD(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False) 
+connection = obd.OBD(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False)
+#connection = obd.OBD(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False) 
 intake = obd.commands.INTAKE_PRESSURE
 barometric = obd.commands.BAROMETRIC_PRESSURE
 oil_temp = obd.commands.OIL_TEMP
@@ -80,7 +81,7 @@ def close(event):
 while loop == False:
     if gauge_sweep_bool == False:
         canvas.create_image(240, 240, image = JEM )
-	time.sleep(2)
+        time.sleep(2)
         canvas.update()
         canvas.update_idletasks()
         canvas.delete(ALL)
@@ -161,7 +162,7 @@ while loop ==True:
     barometric_response = connection.query(barometric)
     boost = ((intake_response.value.magnitude - barometric_response.value.magnitude)*0.145038)   #units of kilopascals to psi
     boost = round(boost, 2) # float is truncated to 2 decimals with round()
-    # oil_temp = round(oil_temp, 2)
+    oil_temp_response = connection.query(oil_temp)
     temp = (boost - min_boost)/(max_boost - min_boost)
     
     arc_length_3 = ((temp*(max_gauge - min_gauge))+ min_gauge)
@@ -207,7 +208,7 @@ while loop ==True:
         
     
     boost_text = canvas.create_text(240, 240, text=boost, fill="white", font=("ds-digital", 100, 'bold'))
-    # other_text = canvas.create_text(240, 400, text=oil_temp, fill="white", font=("ds-digital", 40, 'bold'))
+    other_text = canvas.create_text(240, 400, text=oil_temp_response, fill="white", font=("ds-digital", 40, 'bold'))
     canvas.update()
     canvas.update_idletasks()
 
@@ -221,6 +222,6 @@ while loop ==True:
     #canvas.delete(boost_arc_3)
     #canvas.delete(boost_text)
     canvas.delete(ALL)
-    time.sleep(0.100)
+    time.sleep(0.1)
 
 
