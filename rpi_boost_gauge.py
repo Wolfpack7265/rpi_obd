@@ -20,8 +20,6 @@ if os.environ.get('DISPLAY','') == '':
 loop = False
 gauge_sweep_bool = False
 connection = obd.OBD(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False) 
-#ports = obd.scan_serial()
-#print(ports)
 connection = obd.OBD()
 intake = obd.commands.INTAKE_PRESSURE
 barometric = obd.commands.BAROMETRIC_PRESSURE
@@ -82,10 +80,10 @@ def close(event):
 
 while loop == False:
     if gauge_sweep_bool == False:
-        canvas.create_image(240, 240, image = JEM )   
+        canvas.create_image(240, 240, image = JEM )
+	time.sleep(2)
         canvas.update()
         canvas.update_idletasks()
-        time.sleep(2)
         canvas.delete(ALL)
         gauge_sweep_bool = True
     elif gauge_sweep_1 > -40:
