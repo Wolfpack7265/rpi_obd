@@ -81,9 +81,9 @@ def close(event):
 while loop == False:
     if gauge_sweep_bool == False:
         canvas.create_image(240, 240, image = JEM )
-        time.sleep(2)
         canvas.update()
         canvas.update_idletasks()
+        time.sleep(2)
         canvas.delete(ALL)
         gauge_sweep_bool = True
     elif gauge_sweep_1 > -40:
