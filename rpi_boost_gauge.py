@@ -10,11 +10,11 @@ from tkinter import Label, filedialog, Text
 import tkinter.ttk
 import os 
 import sys
-#from bluetooth import * 
+from bluetooth import * 
 
-"""if os.environ.get('DISPLAY','') == '':
+if os.environ.get('DISPLAY','') == '':
     print('no display found. Using :0.0')
-    os.environ.__setitem__('DISPLAY', ':0.0')"""
+    os.environ.__setitem__('DISPLAY', ':0.0')
 
 
 loop = False
