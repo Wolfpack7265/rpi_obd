@@ -41,8 +41,8 @@ arc_length_1 = round(arc_length_1, 2)
 arc_length_2 = ((red_zone_arc*(max_gauge - min_gauge))+ min_gauge) 
 arc_length_2 = round(arc_length_2, 2)
 
-connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False)
-#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False) 
+connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
