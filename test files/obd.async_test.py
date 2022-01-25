@@ -14,14 +14,20 @@ import sys
 loop = False
 
 connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=5, check_voltage=True, start_low_power=False) 
+rpm = 0
+def rpmTracker(r):
+    global rpm
+    if not r.is_null():
+        rpm = int(r.value.magnitude)
+        print(rpm)
 
-def new_rpm(r):
-    print (r.value)
 
-connection.watch(obd.commands.RPM, callback=new_rpm)
+connection.watch(obd.commands.RPM, callback=rpmTracker)
 connection.start()
 
-# the callback will now be fired upon receipt of new values
+while loop == False:
+    print(rpm)
+    
+    time.sleep(0.03)
 
-time.sleep(60)
-connection.stop()
+
