@@ -10,7 +10,7 @@ from tkinter import Label, filedialog, Text
 import tkinter.ttk
 import os 
 import sys
-#from bluetooth import * 
+from bluetooth import * 
 
 if os.environ.get('DISPLAY','') == '':
     print('no display found. Using :0.0')
@@ -63,9 +63,9 @@ def secondary_tracker(c):
         #print(secondary)
 
 
-connection.watch(obd.commands.INTAKE_PRESSURE, callback=intake_pressure_tracker)
-connection.watch(obd.commands.BAROMETRIC_PRESSURE, callback=barometric_pressure_tracker)
-#connection.watch(obd.commands.RPM, callback=secondary_tracker)
+connection.watch(obd.commands.INTAKE_PRESSURE, force=True, callback=intake_pressure_tracker)
+connection.watch(obd.commands.BAROMETRIC_PRESSURE, force=True, callback=barometric_pressure_tracker)
+connection.watch(obd.commands.COOLANT_TEMP, force=True, callback=secondary_tracker)
 
 root = tk.Tk()
 root.attributes('-fullscreen', True)
@@ -176,12 +176,15 @@ while loop == False:
         canvas.update()
         canvas.update_idletasks()
         loop = True
+        connection.start()
       
    
 
 while loop ==True:
     root.bind('<Escape>', close)
-    connection.start()
+    connection.query(obd.commands.INTAKE_PRESSURE, force=True) 
+    connection.query(obd.commands.BAROMETRIC_PRESSURE, force=True)
+    connection.query(obd.commands.RPM, force=True)
     boost = ((intake - barometric)*0.145038)   #units of kilopascals to psi
     boost = round(boost, 2) # float is truncated to 2 decimals with round()
     temp = (boost - min_boost)/(max_boost - min_boost)
@@ -229,7 +232,7 @@ while loop ==True:
         
     
     boost_text = canvas.create_text(240, 240, text=boost, fill="white", font=("ds-digital", 100, 'bold'))
-    #other_text = canvas.create_text(240, 400, text=secondary, fill="white", font=("ds-digital", 40, 'bold'))
+    other_text = canvas.create_text(240, 400, text=secondary, fill="white", font=("ds-digital", 60, 'bold'))
     canvas.update()
     canvas.update_idletasks()
 
@@ -243,6 +246,6 @@ while loop ==True:
     #canvas.delete(boost_arc_3)
     #canvas.delete(boost_text)
     canvas.delete(ALL)
-    time.sleep(0.03)
+    time.sleep(0.033)
 
 
