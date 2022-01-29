@@ -28,8 +28,6 @@ gauge_sweep_2 = -40
 intake = 0
 barometric = 0
 secondary = 0
-initial_buffer = 0
-final_buffer = 0
 grey_zone_arc = (grey_zone - min_boost)/(max_boost - min_boost)
 red_zone_arc = (red_zone - min_boost)/(max_boost - min_boost)
 arc_length_1 = (grey_zone_arc*(max_gauge - min_gauge))+ min_gauge
@@ -37,7 +35,10 @@ arc_length_1 = round(arc_length_1, 2)
 arc_length_2 = ((red_zone_arc*(max_gauge - min_gauge))+ min_gauge) 
 arc_length_2 = round(arc_length_2, 2)
 arc_length_3 = 0
+initial_buffer = 0
+final_buffer = 0
 temp = 0
+transition = 0
 
 connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
@@ -60,10 +61,21 @@ def secondary_tracker(c):
         #print(secondary)
 
 def boost_buffer():
-    if initial_buffer == 0:
-        print
-
-
+    global initial_buffer
+    global final_buffer
+    global temp
+    if final_buffer == 0:
+        final_buffer = temp
+        transition = (final_buffer)/7
+        initial_buffer += transition
+      
+    
+    elif final_buffer != temp:
+        initial_buffer = final_buffer
+        final_buffer = temp
+        transition = (final_buffer-initial_buffer)/7
+        initial_buffer += transition
+        
 
  
 """ arc_length_3 = ((temp*(max_gauge - min_gauge))+ min_gauge)
@@ -189,10 +201,10 @@ while loop ==True:
     boost = ((intake - barometric)*0.145038)   #units of kilopascals to psi
     boost = round(boost, 2) # float is truncated to 2 decimals with round()
     temp = (boost - min_boost)/(max_boost - min_boost)
-
-    """ arc_length_3 = ((temp*(max_gauge - min_gauge))+ min_gauge)
-    arc_length_3 = round(arc_length_3, 2)"""
-    boost_buffer(arc_length_3)
+    boost_buffer()
+    arc_length_3 = ((initial_buffer*(max_gauge - min_gauge))+ min_gauge)
+    arc_length_3 = round(arc_length_3, 2)
+    
     
     
     canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
@@ -238,7 +250,8 @@ while loop ==True:
     canvas.update()
     canvas.update_idletasks()
 
-    #print(boost) 
+    print(boost) 
+    print(initial_buffer)
     #print(arc_length_1)
     #print(arc_length_2)
     #print(arc_length_3)
