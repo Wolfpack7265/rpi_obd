@@ -231,8 +231,8 @@ while loop ==True:
         lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=max_gauge , end=max_gauge-1) #leading arc for aesthetics
         
     
-    boost_text = canvas.create_text(240, 240, text=boost, fill="white", font=("ds-digital", 100, 'bold'))
-    other_text = canvas.create_text(240, 400, text=secondary, fill="white", font=("ds-digital", 60, 'bold'))
+    boost_text = canvas.create_text(240, 240, text=boost, fill="white", font=("Helvetica", 80, 'bold'))
+    other_text = canvas.create_text(240, 400, text=secondary, fill="white", font=("Helvetica", 60, 'bold'))
     canvas.update()
     canvas.update_idletasks()
 
