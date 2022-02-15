@@ -277,6 +277,9 @@ while loop ==True:
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
             canvas.create_text(240, 150, text="0-100", fill="white", font=("Helvetica", 40, 'bold'))
             speed_text = canvas.create_text(240, 240, text=speed, fill="white", font=("Helvetica", 80, 'bold'))
+            canvas.update()
+            canvas.update_idletasks()
+            canvas.delete(ALL)
         elif speed == 0 and launch == False:
             canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
             canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start=220, end=-40)
@@ -285,8 +288,11 @@ while loop ==True:
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
             canvas.create_text(240, 150, text="0-100", fill="white", font=("Helvetica", 40, 'bold'))
             speed_text = canvas.create_text(240, 240, text=speed, fill="white", font=("Helvetica", 80, 'bold'))
+            canvas.update()
+            canvas.update_idletasks()
             time.sleep(2)
-            launch = True; 
+            launch = True
+            canvas.delete(ALL)
 
         elif speed ==0 and launch==True:
             canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
@@ -296,15 +302,21 @@ while loop ==True:
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
             canvas.create_text(240, 150, text="0-100", fill="white", font=("Helvetica", 40, 'bold'))
             speed_text = canvas.create_text(240, 240, text=speed, fill="white", font=("Helvetica", 80, 'bold'))
+            canvas.update()
+            canvas.update_idletasks()
+            canvas.delete(ALL)
         elif speed >0 and launch==True:
+            start = time.time()
             canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
             canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start=220, end=-40)
             canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= -40)
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
             canvas.create_text(240, 150, text="0-100", fill="white", font=("Helvetica", 40, 'bold'))
-            start = time.time()
             canvas.create_text(240, 240, text=speed, fill="white", font=("Helvetica", 80, 'bold'))
+            canvas.update()
+            canvas.update_idletasks()
+            canvas.delete(ALL)
         elif speed >=100 and launch==True:
             end = time.time()
             final_time = end - start
@@ -315,14 +327,15 @@ while loop ==True:
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
             canvas.create_text(240, 150, text="0-100", fill="white", font=("Helvetica", 40, 'bold'))
             canvas.create_text(240, 240, text=final_time, fill="white", font=("Helvetica", 80, 'bold'))
+            canvas.update()
+            canvas.update_idletasks()
             time.sleep(10)
             launch = False
+            canvas.delete(ALL)
+            
 
         
-        canvas.update()
-        canvas.update_idletasks()
-        canvas.delete(ALL)
-        time.sleep(0.033)
+       
         
     
     
