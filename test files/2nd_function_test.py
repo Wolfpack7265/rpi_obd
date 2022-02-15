@@ -304,7 +304,7 @@ while loop ==True:
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
             canvas.create_text(240, 150, text="0-100", fill="white", font=("Helvetica", 40, 'bold'))
             start = time.time()
-            canvas.create_text(240, 240, text=start, fill="white", font=("Helvetica", 80, 'bold'))
+            canvas.create_text(240, 240, text=speed, fill="white", font=("Helvetica", 80, 'bold'))
         elif speed >=100 and launch==True:
             end = time.time()
             final_time = end - start
