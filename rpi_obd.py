@@ -46,7 +46,7 @@ new_value = 0
 mid_value = 0
 current_value = 0
 i=0
-mode = 1
+mode = 0
 launch = False
 
 connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
