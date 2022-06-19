@@ -10,7 +10,7 @@ from tkinter import Label, filedialog, Text
 import tkinter.ttk
 import os 
 import sys
-#from bluetooth import * 
+from bluetooth import * 
 
 if os.environ.get('DISPLAY','') == '':
     print('no display found. Using :0.0')
@@ -41,11 +41,16 @@ arc_length_1 = (grey_zone_arc*(max_gauge - min_gauge))+ min_gauge
 arc_length_1 = round(arc_length_1, 2)
 arc_length_2 = ((red_zone_arc*(max_gauge - min_gauge))+ min_gauge) 
 arc_length_2 = round(arc_length_2, 2)
+old_value = min_boost
+new_value = 0
+mid_value = 0
+current_value = 0
+i=0
 mode = 1
 launch = False
 
-#connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
-connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
+connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
@@ -114,7 +119,8 @@ def mode_switch(event):
     elif mode == 1:
         mode = 0
 
-  
+connection.query(obd.commands.INTAKE_PRESSURE, force=True) 
+connection.query(obd.commands.BAROMETRIC_PRESSURE, force=True)
 
 while loop == False:
     if gauge_sweep_bool == False:
@@ -199,11 +205,19 @@ while loop ==True:
     if mode == 0:
         root.bind('<Escape>', close)
         root.bind('<Return>', mode_switch)
-        connection.query(obd.commands.INTAKE_PRESSURE, force=True) 
-        connection.query(obd.commands.BAROMETRIC_PRESSURE, force=True)
         boost = ((intake - barometric)*0.145038)   #units of kilopascals to psi
         boost = round(boost, 2) # float is truncated to 2 decimals with round()
-        temp = (boost - min_boost)/(max_boost - min_boost)
+        
+
+        mid_value = (new_value - old_value)/10
+        if i <10:
+            current_value = old_value + i*(mid_value)
+            i+=1
+        elif i>=10:
+             old_value = new_value
+             new_value = boost
+             i =0
+        temp = (current_value - min_boost)/(max_boost - min_boost)
 
         arc_length_3 = ((temp*(max_gauge - min_gauge))+ min_gauge)
         arc_length_3 = round(arc_length_3, 2)
@@ -249,21 +263,14 @@ while loop ==True:
     
         boost_text = canvas.create_text(240, 240, text=boost, fill="white", font=("Helvetica", 80, 'bold'))
         other_text = canvas.create_text(240, 400, text=secondary, fill="white", font=("Helvetica", 60, 'bold'))
-        #canvas.create_text(240, 150, text="psi", fill="white", font=("Helvetica", 20, 'bold'))
+        boost_label = canvas.create_text(240, 300, text="Boost Pressure (PSI)", fill="white", font=("Helvetica", 10, 'bold'))
+        other_label = canvas.create_text(240, 440, text="Coolant Temp (C)", fill="white", font=("Helvetica", 10, 'bold'))
         canvas.update()
         canvas.update_idletasks()
 
-        #print(boost) 
-        #print(arc_length_1)
-        #print(arc_length_2)
-        #print(arc_length_3)
-        #print(oil_temp)
-        #canvas.delete(boost_arc_1)
-        #canvas.delete(boost_arc_2)
-        #canvas.delete(boost_arc_3)
-        #canvas.delete(boost_text)
+        
         canvas.delete(ALL)
-        time.sleep(0.033)
+        #time.sleep(0.033)
 
     elif mode == 1:
         root.bind('<Escape>', close)
@@ -275,7 +282,7 @@ while loop ==True:
             canvas.create_circle_arc(240, 240, 180, style="arc", outline= nominal_color, width=4, start= 220, end= -40)
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
-            canvas.create_text(240, 150, text="0-100", fill="white", font=("Helvetica", 40, 'bold'))
+            canvas.create_text(240, 150, text="0-20", fill="white", font=("Helvetica", 40, 'bold'))
             speed_text = canvas.create_text(240, 240, text=speed, fill="white", font=("Helvetica", 80, 'bold'))
             canvas.update()
             canvas.update_idletasks()
@@ -286,7 +293,7 @@ while loop ==True:
             canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= -40)
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
-            canvas.create_text(240, 150, text="0-100", fill="white", font=("Helvetica", 40, 'bold'))
+            canvas.create_text(240, 150, text="0-20", fill="white", font=("Helvetica", 40, 'bold'))
             speed_text = canvas.create_text(240, 240, text=speed, fill="white", font=("Helvetica", 80, 'bold'))
             canvas.update()
             canvas.update_idletasks()
@@ -300,7 +307,7 @@ while loop ==True:
             canvas.create_circle_arc(240, 240, 180, style="arc", outline= "green", width=4, start= 220, end= -40)
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
-            canvas.create_text(240, 150, text="0-100", fill="white", font=("Helvetica", 40, 'bold'))
+            canvas.create_text(240, 150, text="0-20", fill="white", font=("Helvetica", 40, 'bold'))
             speed_text = canvas.create_text(240, 240, text=speed, fill="white", font=("Helvetica", 80, 'bold'))
             canvas.update()
             canvas.update_idletasks()
@@ -312,12 +319,12 @@ while loop ==True:
             canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= -40)
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
-            canvas.create_text(240, 150, text="0-100", fill="white", font=("Helvetica", 40, 'bold'))
+            canvas.create_text(240, 150, text="0-20", fill="white", font=("Helvetica", 40, 'bold'))
             canvas.create_text(240, 240, text=speed, fill="white", font=("Helvetica", 80, 'bold'))
             canvas.update()
             canvas.update_idletasks()
             canvas.delete(ALL)
-        elif speed >=100 and launch==True:
+        elif speed >=20 and launch==True:
             end = time.time()
             final_time = end - start
             canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
@@ -325,7 +332,7 @@ while loop ==True:
             canvas.create_circle_arc(240, 240, 180, style="arc", outline= red_zone_color, width=4, start= 220, end= -40)
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
             canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
-            canvas.create_text(240, 150, text="0-100", fill="white", font=("Helvetica", 40, 'bold'))
+            canvas.create_text(240, 150, text="0-20", fill="white", font=("Helvetica", 40, 'bold'))
             canvas.create_text(240, 240, text=final_time, fill="white", font=("Helvetica", 80, 'bold'))
             canvas.update()
             canvas.update_idletasks()
