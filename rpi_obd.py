@@ -10,7 +10,7 @@ from tkinter import Label, filedialog, Text
 import tkinter.ttk
 import os 
 import sys
-from bluetooth import * 
+#from bluetooth import * 
 
 if os.environ.get('DISPLAY','') == '':
     print('no display found. Using :0.0')
@@ -43,14 +43,15 @@ arc_length_2 = ((red_zone_arc*(max_gauge - min_gauge))+ min_gauge)
 arc_length_2 = round(arc_length_2, 2)
 old_value = min_boost
 new_value = 0
-mid_value = 0
+increment_value = 0
 current_value = 0
 i=0
+increments = 10
 mode = 0
 launch = False
 
-connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
-#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
+#connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
@@ -207,21 +208,20 @@ while loop ==True:
         root.bind('<Return>', mode_switch)
         boost = ((intake - barometric)*0.145038)   #units of kilopascals to psi
         boost = round(boost, 2) # float is truncated to 2 decimals with round()
-        
 
-        mid_value = (new_value - old_value)/10
-        if i <10:
-            current_value = old_value + i*(mid_value)
+        increment_value = (new_value - old_value)/increments
+        if i <increments:
+            current_value = old_value + i*(increment_value)
+            current_value = round(current_value, 2)
             i+=1
-        elif i>=10:
+        elif i>=increments:
              old_value = new_value
              new_value = boost
-             i =0
+             i = 0
         temp = (current_value - min_boost)/(max_boost - min_boost)
 
         arc_length_3 = ((temp*(max_gauge - min_gauge))+ min_gauge)
         arc_length_3 = round(arc_length_3, 2)
-    
     
         canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
         canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start=220, end=-40)
@@ -235,33 +235,33 @@ while loop ==True:
         boost_arc_3 = canvas.create_circle_arc(240, 240, 205, style="arc", outline="grey", width=50, start=220, end=220)
     
     
-        if boost <= min_boost:
+        if current_value <= min_boost:
         
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=min_gauge -1, end=min_gauge) #leading arc for aesthetics
         
-        elif boost < grey_zone:
+        elif current_value < grey_zone:
             boost_arc_1 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_3)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=arc_length_3 , end=arc_length_3-1) #leading arc for aesthetics
        
-        elif boost > grey_zone and boost < red_zone:
+        elif current_value > grey_zone and current_value < red_zone:
             boost_arc_2 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= nominal_color, width=50, start= arc_length_1 , end= arc_length_3)
             boost_arc_1 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= grey_zone_color, width=50, start=220, end= arc_length_1)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start= arc_length_3 , end= arc_length_3-1) #leading arc for aesthetics
         
-        elif boost > red_zone and boost < max_boost:
+        elif current_value > red_zone and current_value < max_boost:
             boost_arc_3 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= red_zone_color, width=50, start=arc_length_2 , end=arc_length_3)
             boost_arc_2 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= nominal_color, width=50, start=arc_length_1 , end=arc_length_2)
             boost_arc_1 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=arc_length_3 , end=arc_length_3-1) #leading arc for aesthetics
        
-        elif boost >= max_boost:
+        elif current_value >= max_boost:
             boost_arc_3 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= red_zone_color, width=50, start=arc_length_2, end=max_gauge)
             boost_arc_2 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= nominal_color, width=50, start=arc_length_1, end=arc_length_2)
             boost_arc_1 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=max_gauge , end=max_gauge-1) #leading arc for aesthetics
         
     
-        boost_text = canvas.create_text(240, 240, text=boost, fill="white", font=("Helvetica", 80, 'bold'))
+        boost_text = canvas.create_text(240, 240, text=current_value, fill="white", font=("Helvetica", 80, 'bold'))
         other_text = canvas.create_text(240, 400, text=secondary, fill="white", font=("Helvetica", 60, 'bold'))
         boost_label = canvas.create_text(240, 300, text="Boost Pressure (PSI)", fill="white", font=("Helvetica", 10, 'bold'))
         other_label = canvas.create_text(240, 440, text="Coolant Temp (C)", fill="white", font=("Helvetica", 10, 'bold'))
