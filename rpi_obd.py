@@ -10,7 +10,7 @@ from tkinter import Label, filedialog, Text
 import tkinter.ttk
 import os 
 import sys
-#from bluetooth import * 
+from bluetooth import * 
 
 if os.environ.get('DISPLAY','') == '':
     print('no display found. Using :0.0')
@@ -50,8 +50,8 @@ increments = 10
 mode = 0
 launch = False
 
-#connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
-connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
+connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
