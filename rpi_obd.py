@@ -242,6 +242,10 @@ while loop ==True:
         elif current_value < grey_zone:
             boost_arc_1 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_3)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=arc_length_3 , end=arc_length_3-1) #leading arc for aesthetics
+
+        elif current_value == 0:
+            boost_arc_1 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
+            lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=arc_length_3 , end=arc_length_1-1) #leading arc for aesthetics
        
         elif current_value > grey_zone and current_value < red_zone:
             boost_arc_2 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= nominal_color, width=50, start= arc_length_1 , end= arc_length_3)
@@ -301,7 +305,7 @@ while loop ==True:
             launch = True
             canvas.delete(ALL)
 
-        elif speed ==0 and launch==True:
+        elif speed == 0 and launch==True:
             canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
             canvas.create_circle_arc(240, 240, 180, style="arc", outline= "green", width=4, start=220, end=-40)
             canvas.create_circle_arc(240, 240, 180, style="arc", outline= "green", width=4, start= 220, end= -40)
