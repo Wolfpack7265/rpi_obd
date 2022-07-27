@@ -24,6 +24,8 @@ max_boost = 10.0
 min_boost = -10
 min_gauge = 220
 max_gauge = -40
+min_gauge_2 = 175
+max_gauge_2 = 5
 grey_zone = 0
 red_zone = 5
 gauge_color = "grey15"
@@ -33,9 +35,11 @@ red_zone_color = "red"
 gauge_sweep_1 = 220
 gauge_sweep_2 = -40
 intake = 0
+intake_temp = 0
 barometric = 0
 secondary = 0
 speed = 0
+fuel_level = 0
 grey_zone_arc = (grey_zone - min_boost)/(max_boost - min_boost)
 red_zone_arc = (red_zone - min_boost)/(max_boost - min_boost)
 arc_length_1 = (grey_zone_arc*(max_gauge - min_gauge))+ min_gauge
@@ -78,10 +82,24 @@ def speed_tracker(d):
         speed = int(d.value.magnitude)
         #print(secondary)
 
+def intake_temp_tracker(e):
+    global intake_temp
+    if not e.is_null():
+        intake_temp = int(e.value.magnitude)
+        #print(secondary)
+
+def fuel_level_tracker(f):
+    global fuel_level
+    if not f.is_null():
+        fuel_level= int(f.value.magnitude)
+        #print(secondary)
+
 connection.watch(obd.commands.INTAKE_PRESSURE, force=True, callback=intake_pressure_tracker)
 connection.watch(obd.commands.BAROMETRIC_PRESSURE, force=True, callback=barometric_pressure_tracker)
 connection.watch(obd.commands.COOLANT_TEMP, force=True, callback=secondary_tracker)
 connection.watch(obd.commands.SPEED, force=True, callback=speed_tracker)
+connection.watch(obd.commands.INTAKE_TEMP, force=True, callback=intake_temp_tracker)
+connection.watch(obd.commands.FUEL_LEVEL, force=True, callback=fuel_level_tracker)
 
 root = tk.Tk()
 root.attributes('-fullscreen', True)
@@ -252,6 +270,11 @@ while loop ==True:
             boost_arc_2 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= nominal_color, width=50, start= arc_length_1 , end= arc_length_3)
             boost_arc_1 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= grey_zone_color, width=50, start=220, end= arc_length_1)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start= arc_length_3 , end= arc_length_3-1) #leading arc for aesthetics
+
+        elif current_value == red_zone:
+            boost_arc_2 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= nominal_color, width=50, start= arc_length_1 , end= arc_length_3)
+            boost_arc_1 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
+            lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=arc_length_3 , end=arc_length_3-1) #leading arc for aesthetics
         
         elif current_value > red_zone and current_value < max_boost:
             boost_arc_3 = canvas.create_circle_arc(240, 240, 205, style="arc", outline= red_zone_color, width=50, start=arc_length_2 , end=arc_length_3)
@@ -278,6 +301,34 @@ while loop ==True:
         #time.sleep(0.033)
 
     elif mode == 1:
+        root.bind('<Escape>', close)
+        root.bind('<Return>', mode_switch)
+
+        temp = fuel_level/100
+        arc_length_3 = ((temp*(max_gauge_2 - min_gauge_2))+ min_gauge_2)
+        arc_length_3 = round(arc_length_3, 2)
+
+        canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4)
+        canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start= 5, end= 175)
+        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=-5, end=5)
+        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=175, end=185)
+        canvas.create_text(240, 100, text=fuel_level, fill="white", font=("Helvetica", 40, 'bold'))
+        canvas.create_text(240, 140, text="Fuel Level (%)", fill="white", font=("Helvetica", 10, 'bold'))
+        canvas.create_text(240, 240, text=speed, fill="white", font=("Helvetica", 80, 'bold'))
+        canvas.create_text(240, 300, text="Speed (km/h)", fill="white", font=("Helvetica", 10, 'bold'))
+        canvas.create_text(350, 330, text=secondary, fill="white", font=("Helvetica", 40, 'bold'))
+        canvas.create_text(350, 370, text="Coolant Temp (C)", fill="white", font=("Helvetica", 10, 'bold'))
+        canvas.create_text(130, 330, text=intake_temp, fill="white", font=("Helvetica", 40, 'bold'))
+        canvas.create_text(130, 370, text="Intake Temp (C)", fill="white", font=("Helvetica", 10, 'bold'))
+        canvas.create_circle_arc(240, 240, 205, style="arc", outline= grey_zone_color, width=50, start=175, end=arc_length_3)
+        canvas.update()
+        canvas.update_idletasks()
+        canvas.delete(ALL)
+
+        
+        
+
+    elif mode == 2:
         root.bind('<Escape>', close)
         root.bind('<Return>', mode_switch)
         connection.query(obd.commands.SPEED, force=True)
