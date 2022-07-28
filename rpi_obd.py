@@ -275,7 +275,7 @@ def normal_mode_gauge_sweep():
         connection.unwatch(obd.commands.INTAKE_TEMP, callback=intake_temp_tracker)
         connection.start()
 
-def sport_mode_gauge_sweep():
+def boost_mode_gauge_sweep():
     global gauge_sweep_1_bool, gauge_sweep_1_start_point, gauge_sweep_1_end_point, loop, lead_arc
     if gauge_sweep_1_bool == False:
         canvas.create_image(240, 240, image = JEM )
@@ -369,7 +369,7 @@ while loop == False:
     if mode == 0:
         normal_mode_gauge_sweep()
     elif mode == 1:
-        sport_mode_gauge_sweep()
+        boost_mode_gauge_sweep()
    
 
 while loop ==True:
