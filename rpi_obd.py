@@ -11,7 +11,7 @@ import tkinter.ttk
 import os 
 import sys
 import math
-#from bluetooth import * 
+from bluetooth import * 
 
 if os.environ.get('DISPLAY','') == '':
     print('no display found. Using :0.0')
@@ -25,8 +25,8 @@ max_boost = 10.0
 min_boost = -10
 min_gauge = 220
 max_gauge = -40
-min_gauge_2 = 175
-max_gauge_2 = 5
+min_gauge_2 = 170
+max_gauge_2 = 10
 grey_zone = 0
 red_zone = 5
 gauge_color = "grey15"
@@ -35,8 +35,8 @@ nominal_color = "DarkOrange1"
 red_zone_color = "red"
 gauge_sweep_1_start_point = 220
 gauge_sweep_1_end_point = -40
-gauge_sweep_2_start_point = 175
-gauge_sweep_2_end_point = 5
+gauge_sweep_2_start_point = 170
+gauge_sweep_2_end_point = 10
 intake = 0
 intake_temp = 0
 barometric = 0
@@ -62,8 +62,8 @@ start_timer_bool = True
 start_time = 0
 end_time = 0
 
-#connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
-connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
+connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
@@ -117,7 +117,7 @@ def rpm_tracker(g):
 #connection.watch(obd.commands.FUEL_LEVEL, force=True, callback=fuel_level_tracker)
 
 root = tk.Tk()
-#root.attributes('-fullscreen', True)
+root.attributes('-fullscreen', True)
 canvas = tk.Canvas(root, width=480, height=480, borderwidth=0, highlightthickness=0,
 bg="black")
 
@@ -163,6 +163,15 @@ def mode_switch(event):
         
     elif mode == 1:
         mode +=1
+        connection.stop()
+        connection.watch(obd.commands.SPEED, force=True, callback=speed_tracker)
+        connection.unwatch(obd.commands.COOLANT_TEMP, callback=coolant_temp_tracker)
+        connection.unwatch(obd.commands.FUEL_LEVEL, callback=fuel_level_tracker)
+        connection.unwatch(obd.commands.RPM, callback=rpm_tracker)
+        connection.unwatch(obd.commands.INTAKE_PRESSURE, callback=intake_pressure_tracker)
+        connection.unwatch(obd.commands.BAROMETRIC_PRESSURE, callback=barometric_pressure_tracker)
+        connection.unwatch(obd.commands.INTAKE_TEMP, callback=intake_temp_tracker)
+        connection.start()
 
     elif mode == 2:
         mode = 0
@@ -184,6 +193,7 @@ def temp_override_mode_switch():
         connection.watch(obd.commands.INTAKE_PRESSURE, force=True, callback=intake_pressure_tracker)
         connection.watch(obd.commands.BAROMETRIC_PRESSURE, force=True, callback=barometric_pressure_tracker)
         connection.watch(obd.commands.INTAKE_TEMP, force=True, callback=intake_temp_tracker)
+        connection.watch(obd.commands.RPM, force=True, callback=rpm_tracker)
         connection.unwatch(obd.commands.SPEED, callback=speed_tracker)
         connection.unwatch(obd.commands.COOLANT_TEMP, callback=coolant_temp_tracker)
         connection.unwatch(obd.commands.FUEL_LEVEL, callback=fuel_level_tracker)
@@ -211,20 +221,20 @@ def normal_mode_gauge_sweep():
         time.sleep(2)
         canvas.delete(ALL)
         gauge_sweep_2_bool = True
-    elif gauge_sweep_2_start_point > 5:
+    elif gauge_sweep_2_start_point > 10:
         gauge_sweep_2_start_point = (gauge_sweep_2_start_point -1)
         
         if gauge_sweep_2_start_point ==0:
             #canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start= 5, end= 175)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=-15, end=5)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=175, end=195)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start= 10, end= 170)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=-10, end=10)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=170, end=190)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=2 , end= 2 -1)
         else:
             #canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start= 5, end= 175)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=-15, end=5)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=175, end=195)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start= 10, end= 170)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=-10, end=10)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=170, end=190)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=gauge_sweep_2_start_point , end= gauge_sweep_2_start_point-1)
         
         canvas.update()
@@ -232,20 +242,20 @@ def normal_mode_gauge_sweep():
         canvas.delete(ALL)
         
 
-    elif gauge_sweep_2_start_point <= 5 and gauge_sweep_2_end_point >= 5 and gauge_sweep_2_end_point <=175:
+    elif gauge_sweep_2_start_point <= 10 and gauge_sweep_2_end_point >= 10 and gauge_sweep_2_end_point <= 170:
         gauge_sweep_2_end_point = (gauge_sweep_2_end_point + 1)
       
         if gauge_sweep_2_end_point ==0:
            # canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start= 5, end= 175)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=-15, end=5)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=175, end=195)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start= 10, end= 170)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=-10, end=10)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=170, end=190)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=2 , end= 2 -1)
         else:
             #canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start= 5, end= 175)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=-15, end=5)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=175, end=195)
+            canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start= 10, end= 170)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=-10, end=10)
+            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=170, end=190)
             lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=gauge_sweep_2_end_point , end= gauge_sweep_2_end_point-1)
        
         canvas.update()
@@ -253,12 +263,12 @@ def normal_mode_gauge_sweep():
         canvas.delete(ALL)
         
         
-    elif gauge_sweep_2_start_point <= 5 and gauge_sweep_2_end_point >= 175:
+    elif gauge_sweep_2_start_point <= 10 and gauge_sweep_2_end_point >= 170:
        
        # canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
-        canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start= 5, end= 175)
-        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=-15, end=5)
-        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=175, end=195)
+        canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start= 10, end= 170)
+        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=-10, end=10)
+        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=170, end=190)
         canvas.update()
         canvas.update_idletasks()
         canvas.delete(ALL)
@@ -368,7 +378,7 @@ connection.query(obd.commands.BAROMETRIC_PRESSURE, force=True)
 while loop == False:
     if mode == 0:
         normal_mode_gauge_sweep()
-    elif mode == 1:
+    elif mode == 1 or mode ==3:
         boost_mode_gauge_sweep()
    
 
@@ -378,7 +388,6 @@ while loop ==True:
         root.bind('<Return>', mode_switch)
         
         if rpm > 3000:
-            mode = 3
             temp_override_mode_switch()
 
         temp = fuel_level/100
@@ -386,39 +395,48 @@ while loop ==True:
         arc_length_3 = round(arc_length_3, 2)
 
         #canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4)
-        canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start= 5, end= 175)
-        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=-15, end=5)
-        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=175, end=195)
-        canvas.create_text(240, 110, text=fuel_level, fill="white", font=("Helvetica", 40, 'bold'))
-        canvas.create_text(240, 150, text="Fuel Level (%)", fill="white", font=("Helvetica", 10, 'bold'))
+        canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start= 10, end= 170)
+        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=-10, end=10)
+        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=170, end=190)
+        canvas.create_text(240, 120, text=fuel_level, fill="white", font=("Helvetica", 40, 'bold'))
+        canvas.create_text(240, 160, text="Fuel Level (%)", fill="white", font=("Helvetica", 10, 'bold'))
         canvas.create_text(240, 240, text=speed, fill="white", font=("Helvetica", 80, 'bold'))
         canvas.create_text(240, 300, text="Speed (km/h)", fill="white", font=("Helvetica", 10, 'bold'))
         canvas.create_text(240, 400, text=coolant_temp, fill="white", font=("Helvetica", 40, 'bold'))
         canvas.create_text(240, 440, text="Coolant Temp (C)", fill="white", font=("Helvetica", 10, 'bold'))
 
-        if fuel_level > 25:
-         canvas.create_circle_arc(240, 240, 205, style="arc", outline= grey_zone_color, width=50, start=175, end=arc_length_3)
+        if fuel_level > 75:
+         canvas.create_circle_arc(240, 240, 205, style="arc", outline= "forestgreen", width=50, start=170, end=arc_length_3)
          canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=arc_length_3 , end=arc_length_3-1)
-         canvas.create_text(40, 260, text="E", fill="white", font=("Helvetica", 40, 'bold'))
-         canvas.create_text(440, 260, text="F", fill="white", font=("Helvetica", 40, 'bold'))
+         canvas.create_text(40, 240, text="E", fill="white", font=("Helvetica", 40, 'bold'))
+         canvas.create_text(440, 240, text="F", fill="forestgreen", font=("Helvetica", 40, 'bold'))
+         canvas.update()
+         canvas.update_idletasks()
+         canvas.delete(ALL)
+        
+        elif fuel_level > 25 and fuel_level < 75:
+         canvas.create_circle_arc(240, 240, 205, style="arc", outline= grey_zone_color, width=50, start=170, end=arc_length_3)
+         canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=arc_length_3 , end=arc_length_3-1)
+         canvas.create_text(40, 240, text="E", fill="white", font=("Helvetica", 40, 'bold'))
+         canvas.create_text(440, 240, text="F", fill="white", font=("Helvetica", 40, 'bold'))
          canvas.update()
          canvas.update_idletasks()
          canvas.delete(ALL)
 
         elif fuel_level <=25 and fuel_level > 10:
-         canvas.create_circle_arc(240, 240, 205, style="arc", outline= nominal_color, width=50, start=175, end=arc_length_3)
+         canvas.create_circle_arc(240, 240, 205, style="arc", outline= nominal_color, width=50, start=170, end=arc_length_3)
          canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=arc_length_3 , end=arc_length_3-1)
-         canvas.create_text(40, 260, text="E", fill=nominal_color, font=("Helvetica", 40, 'bold'))
-         canvas.create_text(440, 260, text="F", fill="white", font=("Helvetica", 40, 'bold'))
+         canvas.create_text(40, 240, text="E", fill=nominal_color, font=("Helvetica", 40, 'bold'))
+         canvas.create_text(440, 240, text="F", fill="white", font=("Helvetica", 40, 'bold'))
          canvas.update()
          canvas.update_idletasks()
          canvas.delete(ALL)
         
         elif fuel_level <=10: 
-         canvas.create_circle_arc(240, 240, 205, style="arc", outline= red_zone_color, width=50, start=175, end=arc_length_3)
+         canvas.create_circle_arc(240, 240, 205, style="arc", outline= red_zone_color, width=50, start=170, end=arc_length_3)
          canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=arc_length_3 , end=arc_length_3-1)
-         canvas.create_text(40, 260, text="E", fill=red_zone_color, font=("Helvetica", 40, 'bold'))
-         canvas.create_text(440, 260, text="F", fill="white", font=("Helvetica", 40, 'bold'))
+         canvas.create_text(40, 240, text="E", fill=red_zone_color, font=("Helvetica", 40, 'bold'))
+         canvas.create_text(440, 240, text="F", fill="white", font=("Helvetica", 40, 'bold'))
          canvas.update()
          canvas.update_idletasks()
          canvas.delete(ALL)   
@@ -581,7 +599,6 @@ while loop ==True:
             start_time_bool = True
 
         if (end_time - start_time) >= 10:
-            mode = 0  
             temp_override_mode_switch()
             
         root.bind('<Escape>', close)
