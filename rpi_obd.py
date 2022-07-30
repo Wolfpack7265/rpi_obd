@@ -186,7 +186,7 @@ def mode_switch(event):
         connection.start()
 
 def temp_override_mode_switch():
-    global mode
+    global mode, start_timer_bool
     if mode == 0:
         mode = 3
         connection.stop()
@@ -201,6 +201,7 @@ def temp_override_mode_switch():
         
     elif mode == 3:
         mode = 0
+        start_timer_bool = True
         connection.stop()
         connection.watch(obd.commands.SPEED, force=True, callback=speed_tracker)
         connection.watch(obd.commands.COOLANT_TEMP, force=True, callback=coolant_temp_tracker)
@@ -596,7 +597,7 @@ while loop ==True:
             end_time = time.perf_counter()
 
         elif rpm > 2000: 
-            start_time_bool = True
+            start_timer_bool = True
 
         if (end_time - start_time) >= 10:
             temp_override_mode_switch()
