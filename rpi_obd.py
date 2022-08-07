@@ -389,7 +389,7 @@ while loop ==True:
         arc_length_3 = ((temp*(max_gauge_2 - min_gauge_2))+ min_gauge_2)
         arc_length_3 = round(arc_length_3, 2)
 
-        liters_remaining = fuel_level * 50 
+        liters_remaining = fuel_level * 0.50 
 
 
         #canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4)
