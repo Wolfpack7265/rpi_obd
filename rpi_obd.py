@@ -11,7 +11,7 @@ import tkinter.ttk
 import os 
 import sys
 import math
-from bluetooth import * 
+#from bluetooth import * 
 
 #python3 -m elm -s car
 
@@ -31,7 +31,7 @@ max_gauge = -40
 min_gauge_negative = 220
 max_gauge_negative = 180
 min_gauge_fuel = 222
-max_gauge_fuel = 318
+max_gauge_fuel = 295
 grey_zone = 0
 red_zone = 5
 gauge_area = (max_gauge - min_gauge)
@@ -70,8 +70,8 @@ start_time = 0
 end_time = 0
 liters_remaining = 0
 
-connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
-#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
+#connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
@@ -115,16 +115,24 @@ def rpm_tracker(g):
         rpm = int(g.value.magnitude)
         #print(rpm )
 
-def draw(angle, text):
+def draw_increments(angle, text):
     x = math.cos(math.radians(angle)) * 160 + 240
     y = math.sin(math.radians(angle)) * 160 + 240
     obj = canvas.create_text(240, 240, text=text, fill="white", font=("Helvetica", 30, 'bold'))
     canvas.coords(obj, x, y)
     return obj
+def draw_rotated_text(angle, radius, text):
+    x = math.cos(math.radians(angle)) * radius + 240
+    y = math.sin(math.radians(angle)) * radius + 240
+    obj = canvas.create_text(240, 240, text=text, fill="white", font=("Helvetica", 20, 'bold'))
+    canvas.itemconfig(obj, angle=-angle+90)
+    canvas.coords(obj, x, y)
+    return obj
+
 
 def fuel_gauge(fuel):
     global fuel_bar, fuel_bar_arc
-    temp_fuel = fuel/100
+    temp_fuel = 100/100
     arc_length_fuel = ((temp_fuel*(max_gauge_fuel - min_gauge_fuel))+ min_gauge_fuel)
     arc_length_fuel = round(arc_length_fuel, 2)
     if fuel >= 75:
@@ -143,7 +151,7 @@ def fuel_gauge(fuel):
 
 
 root = tk.Tk()
-root.attributes('-fullscreen', True)
+#root.attributes('-fullscreen', True)
 canvas = tk.Canvas(root, width=480, height=480, borderwidth=0, highlightthickness=0,
 bg="black")
 
@@ -184,67 +192,73 @@ def boost_mode_gauge_sweep():
         time.sleep(2)
         canvas.delete(ALL)
         gauge_sweep_1_bool = True
-    elif gauge_sweep_1_start_point > -40:
+    elif gauge_sweep_1_start_point > max_gauge:
         gauge_sweep_1_start_point = (gauge_sweep_1_start_point -2)
         
         if gauge_sweep_1_start_point ==0:
-            #canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= arc_length_1)
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= nominal_color, width=4, start= arc_length_1, end= arc_length_2)
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= red_zone_color, width=4, start= arc_length_2, end=-40)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
-            lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=2 , end= 2 -1)
+            canvas.create_circle_arc(240, 240, 238, style="arc", outline= "white", width=4, start=220, end=-40 ) # outer ring
+            for j in gauge_increment_values:
+                canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1) 
+                draw_increments(180 - (gauge_increment*j),j)
+            canvas.create_text(120, 340, text="-10", fill="white", font=("Helvetica", 30, 'bold')) # min boost 
+            canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
+            canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
+            canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
+            lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline="red", width=216, start=2 , end= 2 -1)
         else:
-            #canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= arc_length_1)
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= nominal_color, width=4, start= arc_length_1, end= arc_length_2)
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= red_zone_color, width=4, start= arc_length_2, end=-40)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
-            lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=gauge_sweep_1_start_point , end= gauge_sweep_1_start_point-1)
+            canvas.create_circle_arc(240, 240, 238, style="arc", outline= "white", width=4, start=220, end=-40 ) # outer ring
+            for j in gauge_increment_values:
+                canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1) 
+                draw_increments(180 - (gauge_increment*j),j)
+            canvas.create_text(120, 340, text="-10", fill="white", font=("Helvetica", 30, 'bold')) # min boost 
+            canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
+            canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
+            canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
+            lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline="red", width=216, start=gauge_sweep_1_start_point , end= gauge_sweep_1_start_point-1)
         
         canvas.update()
         canvas.update_idletasks()
         canvas.delete(ALL)
         
 
-    elif gauge_sweep_1_start_point <= -40 and gauge_sweep_1_end_point >= -40 and gauge_sweep_1_end_point <=220:
+    elif gauge_sweep_1_start_point <= max_gauge and gauge_sweep_1_end_point >= max_gauge and gauge_sweep_1_end_point <= min_gauge_negative:
         gauge_sweep_1_end_point = (gauge_sweep_1_end_point + 2)
       
         if gauge_sweep_1_end_point ==0:
-           # canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start=220, end=-40)
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= arc_length_1)
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= nominal_color, width=4, start= arc_length_1, end= arc_length_2)
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= red_zone_color, width=4, start= arc_length_2, end=-40)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
-            lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=2 , end= 2 -1)
+            canvas.create_circle_arc(240, 240, 238, style="arc", outline= "white", width=4, start=220, end=-40 ) # outer ring
+            for j in gauge_increment_values:
+                canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1) 
+                draw_increments(180 - (gauge_increment*j),j)
+            canvas.create_text(120, 340, text="-10", fill="white", font=("Helvetica", 30, 'bold')) # min boost 
+            canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
+            canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
+            canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
+            lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline="white", width=216, start=2 , end= 2 -1)
         else:
-            #canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start=220, end=-40)
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= arc_length_1)
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= nominal_color, width=4, start= arc_length_1, end= arc_length_2)
-            canvas.create_circle_arc(240, 240, 180, style="arc", outline= red_zone_color, width=4, start= arc_length_2, end=-40)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
-            canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
-            lead_arc = canvas.create_circle_arc(240, 240, 205, style="arc", outline="white", width=60, start=gauge_sweep_1_end_point , end= gauge_sweep_1_end_point-1)
+            canvas.create_circle_arc(240, 240, 238, style="arc", outline= "white", width=4, start=220, end=-40 ) # outer ring
+            for j in gauge_increment_values:
+                canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1) 
+                draw_increments(180 - (gauge_increment*j),j)
+            canvas.create_text(120, 340, text="-10", fill="white", font=("Helvetica", 30, 'bold')) # min boost 
+            canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
+            canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
+            canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
+            lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline="red", width=216, start=gauge_sweep_1_end_point , end= gauge_sweep_1_end_point-1)
        
         canvas.update()
         canvas.update_idletasks()
         canvas.delete(ALL)
         
         
-    elif gauge_sweep_1_start_point <= -40 and gauge_sweep_1_end_point >= 220:
-       
-       # canvas.create_circle(240, 240, 230, fill="black", outline= gauge_color, width=4 )
-        canvas.create_circle_arc(240, 240, 180, style="arc", outline= gauge_color, width=4, start=220, end=-40)
-        canvas.create_circle_arc(240, 240, 180, style="arc", outline= grey_zone_color, width=4, start= 220, end= arc_length_1)
-        canvas.create_circle_arc(240, 240, 180, style="arc", outline= nominal_color, width=4, start= arc_length_1, end= arc_length_2)
-        canvas.create_circle_arc(240, 240, 180, style="arc", outline= red_zone_color, width=4, start= arc_length_2, end=-40)
-        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=220, end=230)
-        canvas.create_circle_arc(240, 240, 195, style="arc", outline= gauge_color, width=70, start=310, end=320)
+    elif gauge_sweep_1_start_point <= max_gauge and gauge_sweep_1_end_point >= min_gauge_negative:
+        canvas.create_circle_arc(240, 240, 238, style="arc", outline= "white", width=4, start=220, end=-40 ) # outer ring
+        for j in gauge_increment_values:
+            canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1) 
+            draw_increments(180 - (gauge_increment*j),j)
+        canvas.create_text(120, 340, text="-10", fill="white", font=("Helvetica", 30, 'bold')) # min boost 
+        canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
+        canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
+        canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
         canvas.update()
         canvas.update_idletasks()
         canvas.delete(ALL)
@@ -260,9 +274,15 @@ def boost_mode_gauge_sweep():
         connection.unwatch(obd.commands.COOLANT_TEMP, callback=coolant_temp_tracker)
         connection.unwatch(obd.commands.RPM, callback=rpm_tracker)
         connection.start()
+        canvas.create_circle_arc(240, 240, 238, style="arc", outline= "white", width=4, start=220, end=-40 ) # outer ring
         for j in gauge_increment_values:
                 canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1) 
-                draw(180 - (gauge_increment*j),j)
+                draw_increments(180 - (gauge_increment*j),j)
+        canvas.create_text(120, 340, text="-10", fill="white", font=("Helvetica", 30, 'bold')) # min boost 
+        canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
+        canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
+        canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
+
 
 
 connection.query(obd.commands.INTAKE_PRESSURE, force=True) 
@@ -274,7 +294,7 @@ while loop == False:
 
 while loop ==True:   
         root.bind('<Escape>', close)
-        boost = ((intake - barometric)*0.145038)  #units of kilopascals to psi
+        boost = ((intake - barometric)*0.145038) #units of kilopascals to psi
         boost = round(boost, 2) # float is truncated to 2 decimals with round()
 
         increment_value = (new_value - old_value)/increments
@@ -298,76 +318,41 @@ while loop ==True:
             arc_length_3 = round(arc_length_3, 2)
     
         boost_label = canvas.create_text(240, 175, text="Boost Pressure (PSI)", fill="white", font=("Helvetica", 10, 'bold'))
-        fuel_label = canvas.create_text(240, 400, text=fuel_level, fill="white", font=("Helvetica", 20, 'bold'))
-        fuel_percent = canvas.create_text(275, 400, text="%", fill="white", font=("Helvetica", 20, 'bold'))
+        fuel_label = draw_rotated_text(417, 225, fuel_level)
+        fuel_percent = draw_rotated_text(408, 225, '%')
         fuel_gauge(fuel_level)
     
         if current_value <= min_boost_negative:
-           outer_ring = canvas.create_circle_arc(240, 240, 238, style="arc", outline= "white", width=4, start=220, end=-40 ) # outer ring
-           min_boost_text = canvas.create_text(120, 340, text="-10", fill="white", font=("Helvetica", 30, 'bold')) # min boost  
-           inner_circle = canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
-           left_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
-           right_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
            boost_arc_3 = boost_arc_2 = boost_arc_1 = lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline="red", width= 216, start=min_gauge_negative -2, end=min_gauge_negative)
         
         elif current_value < grey_zone:
-            boost_arc_3 = boost_arc_2 = boost_arc_1 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_3)
-            outer_ring = canvas.create_circle_arc(240, 240, 238, style="arc", outline= "white", width=4, start=220, end=-40 ) # outer ring
-            min_boost_text = canvas.create_text(120, 340, text="-10", fill="white", font=("Helvetica", 30, 'bold')) # min boost  
-            inner_circle = canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
-            left_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
-            right_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
+            boost_arc_3 = boost_arc_2 = boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_3)
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline="red", width=216, start=arc_length_3 , end=arc_length_3-2) #leading arc for aesthetics
 
         elif current_value == 0:
-            boost_arc_3 = boost_arc_2 = boost_arc_1 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
-            outer_ring = canvas.create_circle_arc(240, 240, 238, style="arc", outline= "white", width=4, start=220, end=-40 ) # outer ring
-            min_boost_text = canvas.create_text(120, 340, text="-10", fill="white", font=("Helvetica", 30, 'bold')) # min boost  
-            inner_circle = canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
-            left_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
-            right_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
+            boost_arc_3 = boost_arc_2 = boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline="red", width=216, start=arc_length_3 , end=arc_length_1-2) #leading arc for aesthetics
        
         elif current_value > grey_zone and current_value < red_zone:
-            boost_arc_3 = boost_arc_2 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= nominal_color, width=50, start= arc_length_1 , end= arc_length_3)
-            boost_arc_1 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= grey_zone_color, width=50, start=220, end= arc_length_1)
-            outer_ring = canvas.create_circle_arc(240, 240, 238, style="arc", outline= "white", width=4, start=220, end=-40 ) # outer ring
-            min_boost_text = canvas.create_text(120, 340, text="-10", fill="white", font=("Helvetica", 30, 'bold')) # min boost  
-            inner_circle = canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
-            left_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
-            right_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
+            boost_arc_3 = boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= nominal_color, width=50, start= arc_length_1 , end= arc_length_3)
+            boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=220, end= arc_length_1)
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline="red", width=216, start= arc_length_3 , end= arc_length_3-2) #leading arc for aesthetics
 
         elif current_value == red_zone:
-            boost_arc_3 = boost_arc_2 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= nominal_color, width=50, start= arc_length_1 , end= arc_length_3)
+            boost_arc_3 = boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= nominal_color, width=50, start= arc_length_1 , end= arc_length_3)
             boost_arc_1 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
-            outer_ring = canvas.create_circle_arc(240, 240, 238, style="arc", outline= "white", width=4, start=220, end=-40 ) # outer ring
-            min_boost_text = canvas.create_text(120, 340, text="-10", fill="white", font=("Helvetica", 30, 'bold')) # min boost  
-            inner_circle = canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
-            left_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
-            right_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline="red", width=216, start=arc_length_3 , end=arc_length_3-2) #leading arc for aesthetics
         
         elif current_value > red_zone and current_value < max_boost:
-            boost_arc_3 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= red_zone_color, width=50, start=arc_length_2 , end=arc_length_3)
-            boost_arc_2 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= nominal_color, width=50, start=arc_length_1 , end=arc_length_2)
-            boost_arc_1 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
-            outer_ring = canvas.create_circle_arc(240, 240, 238, style="arc", outline= "white", width=4, start=220, end=-40 ) # outer ring
-            min_boost_text = canvas.create_text(120, 340, text="-10", fill="white", font=("Helvetica", 30, 'bold')) # min boost  
-            inner_circle = canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
-            left_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
-            right_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
+            boost_arc_3 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= red_zone_color, width=50, start=arc_length_2 , end=arc_length_3)
+            boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= nominal_color, width=50, start=arc_length_1 , end=arc_length_2)
+            boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline="red", width=216, start=arc_length_3 , end=arc_length_3-2) #leading arc for aesthetics
        
         elif current_value >= max_boost:
-            boost_arc_3 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= red_zone_color, width=50, start=arc_length_2, end=max_gauge)
-            boost_arc_2 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= nominal_color, width=50, start=arc_length_1, end=arc_length_2)
-            boost_arc_1 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
-            outer_ring = canvas.create_circle_arc(240, 240, 238, style="arc", outline= "white", width=4, start=220, end=-40 ) # outer ring
-            min_boost_text = canvas.create_text(120, 340, text="-10", fill="white", font=("Helvetica", 30, 'bold')) # min boost  
-            inner_circle = canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
-            left_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
-            right_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
+            boost_arc_3 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= red_zone_color, width=50, start=arc_length_2, end=max_gauge)
+            boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= nominal_color, width=50, start=arc_length_1, end=arc_length_2)
+            boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline="red", width=216, start=max_gauge , end=max_gauge-2) #leading arc for aesthetics
         
         canvas.update()
@@ -375,11 +360,6 @@ while loop ==True:
         canvas.delete(boost_arc_1)
         canvas.delete(boost_arc_2)
         canvas.delete(boost_arc_3)
-        canvas.delete(outer_ring)
-        canvas.delete(min_boost_text)
-        canvas.delete(inner_circle)
-        canvas.delete(left_endstop)
-        canvas.delete(right_endstop)
         canvas.delete(lead_arc)
         canvas.delete(boost_label)
         canvas.delete(fuel_label)
