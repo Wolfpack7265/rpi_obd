@@ -132,7 +132,7 @@ def draw_rotated_text(angle, radius, text):
 
 def fuel_gauge(fuel):
     global fuel_bar, fuel_bar_arc
-    temp_fuel = 100/100
+    temp_fuel = fuel_level/100
     arc_length_fuel = ((temp_fuel*(max_gauge_fuel - min_gauge_fuel))+ min_gauge_fuel)
     arc_length_fuel = round(arc_length_fuel, 2)
     if fuel >= 75:
