@@ -282,6 +282,8 @@ def boost_mode_gauge_sweep():
         canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=220, end=222) # left endstop
         canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=50, start=320, end=318) # right endstop
         canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
+        canvas.create_circle_arc(240, 240, 225, style="arc", outline= "white", width=25, start=max_gauge_fuel, end=max_gauge_fuel -1) # fuel endstop
+
 
 
 
