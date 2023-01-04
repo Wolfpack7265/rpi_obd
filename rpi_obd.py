@@ -141,7 +141,6 @@ def draw_passive_elements():
     canvas.create_circle(240, 240, 20, fill=gauge_color, outline= "white", width=4 ) # inner circle
     canvas.create_circle_arc(240, 240, 225, style="arc", outline= "white", width=25, start=max_gauge_fuel, end=max_gauge_fuel -1) # fuel endstop
     canvas.create_text(240, 175, text="Boost Pressure (PSI)", fill="white", font=("Helvetica", 10, 'bold')) # boost text
-    draw_rotated_text(417, 225, fuel_level) # text for fuel level
     draw_rotated_text(408, 225, '%') # percent of fuel level
 
 def fuel_gauge(fuel):
@@ -280,6 +279,7 @@ while loop ==True:
             arc_length_3 = round(arc_length_3, 2)
     
         fuel_gauge(fuel_level)
+        fuel_text = draw_rotated_text(417, 225, fuel_level) # text for fuel level
     
         if current_value <= min_boost_negative:
            boost_arc_3 = boost_arc_2 = boost_arc_1 = lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width= 216, start=min_gauge_negative -2, end=min_gauge_negative)
@@ -322,5 +322,6 @@ while loop ==True:
         canvas.delete(lead_arc)
         canvas.delete(fuel_bar)
         canvas.delete(fuel_bar_arc)
+        canvas.delete(fuel_text)
 
    
