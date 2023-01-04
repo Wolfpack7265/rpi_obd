@@ -208,7 +208,7 @@ def gauge_sweep():
         draw_passive_elements()
         gauge_sweep_1_bool = True
     elif gauge_sweep_1_start_point > max_gauge:
-        gauge_sweep_1_start_point = (gauge_sweep_1_start_point -2)
+        gauge_sweep_1_start_point = (gauge_sweep_1_start_point -1)
         
         if gauge_sweep_1_start_point ==0:
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=2 , end= 2 -1)
@@ -220,7 +220,7 @@ def gauge_sweep():
         
 
     elif gauge_sweep_1_start_point <= max_gauge and gauge_sweep_1_end_point >= max_gauge and gauge_sweep_1_end_point <= min_gauge_negative:
-        gauge_sweep_1_end_point = (gauge_sweep_1_end_point + 2)
+        gauge_sweep_1_end_point = (gauge_sweep_1_end_point + 1)
       
         if gauge_sweep_1_end_point ==0:
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=2 , end= 2 -1)
