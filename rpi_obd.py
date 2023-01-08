@@ -210,9 +210,9 @@ def gauge_sweep():
         gauge_sweep_1_start_point = (gauge_sweep_1_start_point -1)
         
         if gauge_sweep_1_start_point ==0:
-            lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=2 , end= 2 -1)
+            lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=2 , end= 2 -2)
         else:
-            lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=gauge_sweep_1_start_point , end= gauge_sweep_1_start_point-1)
+            lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=gauge_sweep_1_start_point , end= gauge_sweep_1_start_point-2)
         canvas.update()
         canvas.update_idletasks()
         canvas.delete(lead_arc)
@@ -222,9 +222,9 @@ def gauge_sweep():
         gauge_sweep_1_end_point = (gauge_sweep_1_end_point + 1)
       
         if gauge_sweep_1_end_point ==0:
-            lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=2 , end= 2 -1)
+            lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=2 , end= 2 -2)
         else:
-            lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=gauge_sweep_1_end_point , end= gauge_sweep_1_end_point-1)
+            lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=gauge_sweep_1_end_point , end= gauge_sweep_1_end_point-2)
         canvas.update()
         canvas.update_idletasks()
         canvas.delete(lead_arc)
@@ -241,9 +241,9 @@ def gauge_sweep():
         connection.watch(obd.commands.BAROMETRIC_PRESSURE, force=True, callback=barometric_pressure_tracker)
         connection.watch(obd.commands.INTAKE_TEMP, force=True, callback=intake_temp_tracker)
         connection.watch(obd.commands.FUEL_LEVEL, callback=fuel_level_tracker)
-        connection.unwatch(obd.commands.SPEED, callback=speed_tracker)
-        connection.unwatch(obd.commands.COOLANT_TEMP, callback=coolant_temp_tracker)
-        connection.unwatch(obd.commands.RPM, callback=rpm_tracker)
+        # connection.unwatch(obd.commands.SPEED, callback=speed_tracker)
+        # connection.unwatch(obd.commands.COOLANT_TEMP, callback=coolant_temp_tracker)
+        # connection.unwatch(obd.commands.RPM, callback=rpm_tracker)
         connection.start()
         draw_passive_elements()
         
@@ -255,7 +255,7 @@ while loop == False:
    
 while loop ==True:   
         root.bind('<Escape>', close)
-        boost = ((intake - barometric)*0.145038) #units of kilopascals to psi
+        boost = ((intake - barometric)*0.145038)+5#units of kilopascals to psi
         boost = round(boost, 2) # float is truncated to 2 decimals with round()
 
         increment_value = (new_value - old_value)/increments
@@ -285,33 +285,33 @@ while loop ==True:
            boost_arc_3 = boost_arc_2 = boost_arc_1 = lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width= 216, start=min_gauge_negative -2, end=min_gauge_negative)
         
         elif current_value < grey_zone:
-            boost_arc_3 = boost_arc_2 = boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_3)
+            boost_arc_3 = boost_arc_2 = boost_arc_1 = canvas.create_circle_arc(240, 240, 213, style="arc", outline= grey_zone_color, width=54, start=220, end=arc_length_3)
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=arc_length_3 , end=arc_length_3-2) #leading arc for aesthetics
-
+            #boost_arc_3 = boost_arc_2 = boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_3)
         elif current_value == 0:
-            boost_arc_3 = boost_arc_2 = boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
+            boost_arc_3 = boost_arc_2 = boost_arc_1 = canvas.create_circle_arc(240, 240, 213, style="arc", outline= grey_zone_color, width=54, start=220, end=arc_length_1)
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=arc_length_3 , end=arc_length_1-2) #leading arc for aesthetics
        
         elif current_value > grey_zone and current_value < red_zone:
-            boost_arc_3 = boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= nominal_color, width=50, start= arc_length_1 , end= arc_length_3)
-            boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=220, end= arc_length_1)
+            boost_arc_3 = boost_arc_2 = canvas.create_circle_arc(240, 240, 213, style="arc", outline= nominal_color, width=54, start= arc_length_1 , end= arc_length_3)
+            boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=54, start=220, end= arc_length_1)
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start= arc_length_3 , end= arc_length_3-2) #leading arc for aesthetics
 
         elif current_value == red_zone:
-            boost_arc_3 = boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= nominal_color, width=50, start= arc_length_1 , end= arc_length_3)
-            boost_arc_1 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
+            boost_arc_3 = boost_arc_2 = canvas.create_circle_arc(240, 240, 213, style="arc", outline= nominal_color, width=54, start= arc_length_1 , end= arc_length_3)
+            boost_arc_1 = canvas.create_circle_arc(240, 240, 215, style="arc", outline= grey_zone_color, width=54, start=220, end=arc_length_1)
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=arc_length_3 , end=arc_length_3-2) #leading arc for aesthetics
         
         elif current_value > red_zone and current_value < max_boost:
-            boost_arc_3 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= red_zone_color, width=50, start=arc_length_2 , end=arc_length_3)
-            boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= nominal_color, width=50, start=arc_length_1 , end=arc_length_2)
-            boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
+            boost_arc_3 = canvas.create_circle_arc(240, 240, 213, style="arc", outline= red_zone_color, width=54, start=arc_length_2 , end=arc_length_3)
+            boost_arc_2 = canvas.create_circle_arc(240, 240, 213, style="arc", outline= red_zone_color, width=54, start=arc_length_1 , end=arc_length_2)
+            boost_arc_1 = canvas.create_circle_arc(240, 240, 213, style="arc", outline= grey_zone_color, width=54, start=220, end=arc_length_1)
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=arc_length_3 , end=arc_length_3-2) #leading arc for aesthetics
        
         elif current_value >= max_boost:
-            boost_arc_3 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= red_zone_color, width=50, start=arc_length_2, end=max_gauge)
-            boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= red_zone_color, width=50, start=arc_length_1, end=arc_length_2)
-            boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_1)
+            boost_arc_3 = canvas.create_circle_arc(240, 240, 213, style="arc", outline= red_zone_color, width=54, start=arc_length_2, end=max_gauge)
+            boost_arc_2 = canvas.create_circle_arc(240, 240, 213, style="arc", outline= red_zone_color, width=54, start=arc_length_1, end=arc_length_2)
+            boost_arc_1 = canvas.create_circle_arc(240, 240, 213, style="arc", outline= grey_zone_color, width=54, start=220, end=arc_length_1)
             lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=max_gauge , end=max_gauge-2) #leading arc for aesthetics
         
         canvas.update()
@@ -323,5 +323,3 @@ while loop ==True:
         canvas.delete(fuel_bar)
         canvas.delete(fuel_bar_arc)
         canvas.delete(fuel_text)
-
-   
