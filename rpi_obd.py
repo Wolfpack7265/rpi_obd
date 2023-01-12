@@ -15,7 +15,7 @@ from bluetooth import *
 
 #python3 -m elm -s car
 
-if os.environ.get('DISPLAY','') == '':
+if os.environ.get('DISPLAY','') == '': # sets display
     print('no display found. Using :0.0')
     os.environ.__setitem__('DISPLAY', ':0.0')
 
