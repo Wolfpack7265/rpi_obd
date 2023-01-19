@@ -11,7 +11,7 @@ import tkinter.ttk
 import os 
 import sys
 import math
-from bluetooth import * 
+#from bluetooth import * 
 
 #python3 -m elm -s car
 
@@ -60,7 +60,7 @@ arc_length_1 = round(arc_length_1, 2)
 arc_length_2 = ((red_zone_arc*(max_gauge - min_gauge))+ min_gauge) 
 arc_length_2 = round(arc_length_2, 2)
 old_value = min_boost_negative
-new_value = 0
+new_value = min_boost_negative
 increment_value = 0
 current_value = 0
 i=0
@@ -71,8 +71,8 @@ start_time = 0
 end_time = 0
 liters_remaining = 0
 
-connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
-#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
+#connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
@@ -164,7 +164,7 @@ def fuel_gauge(fuel):
 
 
 root = tk.Tk()
-root.attributes('-fullscreen', True)
+#root.attributes('-fullscreen', True)
 canvas = tk.Canvas(root, width=480, height=480, borderwidth=0, highlightthickness=0,
 bg="black")
 
