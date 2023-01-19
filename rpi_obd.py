@@ -11,7 +11,7 @@ import tkinter.ttk
 import os 
 import sys
 import math
-#from bluetooth import * 
+from bluetooth import * 
 
 #python3 -m elm -s car
 
@@ -77,8 +77,8 @@ start_time = 0
 end_time = 0
 liters_remaining = 0
 
-#connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
-connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
+connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
@@ -158,7 +158,6 @@ def draw_passive_elements():
     min_boost = canvas.create_text(110, 340, text="-10", fill= "white", font=("Helvetica", 20, 'bold')) # min boost 
     left_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=60, start=220, end=222) # left endstop
     right_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= red_zone_color, width=60, start=320, end=318) # right endstop
-    #inner_circle = canvas.create_circle(240, 240, 20, fill=gauge_color, outline= gauge_color, width=4 ) # inner circle
     fuel_endstop = canvas.create_circle_arc(240, 240, 225, style="arc", outline= "white", width=25, start=max_gauge_fuel, end=max_gauge_fuel -1) # fuel endstop
     boost_text = canvas.create_text(240, 130, text="Boost Pressure (PSI)", fill= "white", font=("Helvetica", 10, 'bold')) # boost text
     draw_rotated_text(408, 225, '%') # percent of fuel level
@@ -184,7 +183,7 @@ def fuel_gauge(fuel):
 
 
 root = tk.Tk()
-#root.attributes('-fullscreen', True)
+root.attributes('-fullscreen', True)
 canvas = tk.Canvas(root, width=480, height=480, borderwidth=0, highlightthickness=0,
 bg="black")
 
