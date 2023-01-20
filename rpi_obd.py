@@ -11,7 +11,7 @@ import tkinter.ttk
 import os 
 import sys
 import math
-from bluetooth import * 
+#from bluetooth import * 
 
 #python3 -m elm -s car
 
@@ -77,8 +77,8 @@ start_time = 0
 end_time = 0
 liters_remaining = 0
 
-connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
-#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
+#connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
@@ -153,7 +153,8 @@ def draw_passive_elements():
             gauge_increments = canvas.create_circle_arc(240, 240, 211, style="arc", outline= gauge_color, width=56, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
         outer_ring=canvas.create_circle_arc(240, 240, 238, style="arc", outline= increment_color, width=4, start=180 + (gauge_increment*(j-1)), end=180 + (gauge_increment*j ))
         inner_ring=canvas.create_circle_arc(240, 240, 186, style="arc", outline= increment_color, width=2, start=180 + (gauge_increment*(j-1)), end=180 + (gauge_increment*(j) ))
-        canvas.create_circle_arc(240, 240, 186, style="arc", outline= "black", width=4, start=220, end= 181 ) # inner ring negative cover 
+        negative_cover = canvas.create_circle_arc(240, 240, 186, style="arc", outline= "black", width=4, start=220, end= 180 ) # inner ring negative cover 
+        canvas.tag_raise(gauge_increments)
         draw_increments(180 - (gauge_increment*j),j)
     min_boost = canvas.create_text(110, 340, text="-10", fill= "white", font=("Helvetica", 20, 'bold')) # min boost 
     left_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=60, start=220, end=222) # left endstop
@@ -183,7 +184,7 @@ def fuel_gauge(fuel):
 
 
 root = tk.Tk()
-root.attributes('-fullscreen', True)
+#root.attributes('-fullscreen', True)
 canvas = tk.Canvas(root, width=480, height=480, borderwidth=0, highlightthickness=0,
 bg="black")
 
@@ -301,23 +302,23 @@ while loop ==True:
         fuel_text = draw_rotated_text(417, 225, fuel_level) # text for fuel level
     
         if current_value <= min_boost_negative:
-            boost_arc_4 = boost_arc_3 = boost_arc_2 = boost_arc_1 = lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width= 50, start=min_gauge_negative -2, end=min_gauge_negative)
+            boost_arc_4 = boost_arc_3 = boost_arc_2 = boost_arc_1 = lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width= 58, start=min_gauge_negative -2, end=min_gauge_negative)
             canvas.tag_lower(lead_arc)
         elif current_value < grey_zone:
             boost_arc_4 =boost_arc_3 = boost_arc_2 = boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= negative_zone_color, width=50, start=220, end=arc_length_4)
-            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=50, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
+            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=58, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
             #lead_arc = canvas.create_circle_arc(240, 240, 128, style="arc", outline=needle_color, width=216, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
             #boost_arc_3 = boost_arc_2 = boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=220, end=arc_length_4)
             canvas.tag_lower(boost_arc_1)
         elif current_value == 0:
             boost_arc_4 = boost_arc_3 = boost_arc_2 = boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= negative_zone_color, width=50, start=220, end=arc_length_4)
-            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=50, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
+            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=58, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
             canvas.tag_lower(boost_arc_1)
        
         elif current_value > grey_zone and current_value < nominal_zone:
             boost_arc_4 =boost_arc_3 = boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start= arc_length_1 , end= arc_length_4)
             boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= negative_zone_color, width=50, start=220, end= arc_length_1)
-            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=50, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
+            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=58, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
             #boost_arc_3 = boost_arc_2 = canvas.create_circle_arc(240, 240, 213, style="arc", outline= nominal_color, width=54, start= arc_length_2 , end= arc_length_4)
             canvas.tag_lower(boost_arc_1)
             canvas.tag_lower(boost_arc_2)
@@ -325,7 +326,7 @@ while loop ==True:
         elif current_value == nominal_zone:
             boost_arc_4 = boost_arc_3 = boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start= arc_length_1 , end= arc_length_2)
             boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= negative_zone_color, width=50, start=220, end=arc_length_1)
-            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=50, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
+            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=58, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
             canvas.tag_lower(boost_arc_1)
             canvas.tag_lower(boost_arc_2)
         
@@ -333,7 +334,7 @@ while loop ==True:
             boost_arc_4 = boost_arc_3 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= nominal_zone_color, width=50, start=arc_length_2 , end=arc_length_4)
             boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=arc_length_1 , end=arc_length_2)
             boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= negative_zone_color, width=50, start=220, end=arc_length_1)
-            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=50, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
+            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=58, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
             canvas.tag_lower(boost_arc_1)
             canvas.tag_lower(boost_arc_2)
             canvas.tag_lower(boost_arc_3)
@@ -342,7 +343,7 @@ while loop ==True:
             boost_arc_4 = boost_arc_3 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= nominal_zone_color, width=50, start=arc_length_2 , end=arc_length_4)
             boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=arc_length_1 , end=arc_length_2)
             boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= negative_zone_color, width=50, start=220, end=arc_length_1)
-            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=50, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
+            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=58, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
             canvas.tag_lower(boost_arc_1)
             canvas.tag_lower(boost_arc_2)
             canvas.tag_lower(boost_arc_3)
@@ -352,7 +353,7 @@ while loop ==True:
             boost_arc_3 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= nominal_zone_color, width=50, start=arc_length_2 , end=arc_length_3)
             boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=arc_length_1 , end=arc_length_2)
             boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= negative_zone_color, width=50, start=220, end=arc_length_1)
-            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=50, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
+            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=58, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
             canvas.tag_lower(boost_arc_1)
             canvas.tag_lower(boost_arc_2)
             canvas.tag_lower(boost_arc_3)
@@ -364,7 +365,7 @@ while loop ==True:
             boost_arc_3 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= nominal_zone_color, width=50, start=arc_length_2, end=arc_length_3)
             boost_arc_2 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= grey_zone_color, width=50, start=arc_length_1, end=arc_length_2)
             boost_arc_1 = canvas.create_circle_arc(240, 240, 211, style="arc", outline= negative_zone_color, width=50, start=220, end=arc_length_1)
-            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=50, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
+            lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=58, start=arc_length_4 , end=arc_length_4-2) #leading arc for aesthetics
             canvas.tag_lower(boost_arc_1)
             canvas.tag_lower(boost_arc_2)
             canvas.tag_lower(boost_arc_3)
