@@ -22,7 +22,7 @@ if os.environ.get('DISPLAY','') == '': # sets display
 
 loop = False
 gauge_sweep_1_bool = False
-max_boost = 10.0
+max_boost = 12
 min_boost = 0
 max_boost_negative = 0
 min_boost_negative= -10
@@ -33,11 +33,11 @@ max_gauge_negative = 180
 min_gauge_fuel = 222
 max_gauge_fuel = 295
 grey_zone = 0
-nominal_zone = 5
-red_zone = 8
+nominal_zone = 8
+red_zone = 10
 gauge_area = (max_gauge - min_gauge)
 gauge_increment = gauge_area / max_boost
-gauge_increment_values = range(11)
+gauge_increment_values = range(max_boost+1)
 gauge_color = "grey15" #"grey15"
 needle_color = "red3"
 negative_zone_color = "black"
@@ -286,7 +286,7 @@ while loop == False:
    
 while loop ==True:   
         root.bind('<Escape>', close)
-        boost = ((intake - barometric)*0.145038) #units of kilopascals to psi
+        boost = ((intake - barometric)*0.145038)#units of kilopascals to psi
         boost = round(boost, 2) # float is truncated to 2 decimals with round()
 
         increment_value = (new_value - old_value)/increments
