@@ -11,7 +11,7 @@ import tkinter.ttk
 import os 
 import sys
 import math
-#from bluetooth import * 
+from bluetooth import * 
 
 #python3 -m elm -s car
 
@@ -77,8 +77,8 @@ start_time = 0
 end_time = 0
 liters_remaining = 0
 
-#connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
-connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
+connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
@@ -128,10 +128,10 @@ def draw_increments(angle, text):
     obj = canvas.create_text(240, 240, text=text, fill= increment_color, font=("Helvetica", 20, 'bold'))
     canvas.coords(obj, x, y)
     return obj
-def draw_rotated_text(angle, radius, text):
+def draw_rotated_text(angle, radius, text, size):
     x = math.cos(math.radians(angle)) * radius + 240
     y = math.sin(math.radians(angle)) * radius + 240
-    obj = canvas.create_text(240, 240, text=text, fill="white", font=("Helvetica", 20, 'bold'))
+    obj = canvas.create_text(240, 240, text=text, fill="white", font=("Helvetica", size, 'bold'))
     canvas.itemconfig(obj, angle=-angle+90)
     canvas.coords(obj, x, y)
     return obj
@@ -141,27 +141,39 @@ def draw_passive_elements():
     for j in gauge_increment_values:
         if j == 0:
             increment_color = "white"
-            gauge_increments = canvas.create_circle_arc(240, 240, 211, style="arc", outline= "white", width=56, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
+            gauge_increments_black = canvas.create_circle_arc(240, 240, 211, style="arc", outline= "black", width=56, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
+            gauge_increments_top = canvas.create_circle_arc(240, 240, 236, style="arc", outline= increment_color, width=10, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
+            gauge_increments_bottom = canvas.create_circle_arc(240, 240, 190, style="arc", outline= increment_color, width=6, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
         elif j >= 0 and j <= nominal_zone:
             increment_color = "white"
-            gauge_increments = canvas.create_circle_arc(240, 240, 211, style="arc", outline= gauge_color, width=56, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
+            gauge_increments_black = canvas.create_circle_arc(240, 240, 211, style="arc", outline= "black", width=56, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
+            gauge_increments_top = canvas.create_circle_arc(240, 240, 236, style="arc", outline= increment_color, width=10, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
+            gauge_increments_bottom = canvas.create_circle_arc(240, 240, 190, style="arc", outline= increment_color, width=6, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
         elif j > nominal_zone and j<= red_zone:
             increment_color = nominal_zone_color
-            gauge_increments = canvas.create_circle_arc(240, 240, 211, style="arc", outline= gauge_color, width=56, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
+            gauge_increments_black = canvas.create_circle_arc(240, 240, 211, style="arc", outline= "black", width=56, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
+            gauge_increments_top = canvas.create_circle_arc(240, 240, 236, style="arc", outline= increment_color, width=10, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
+            gauge_increments_bottom = canvas.create_circle_arc(240, 240, 190, style="arc", outline= increment_color, width=6, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
         elif j > red_zone:
             increment_color = red_zone_color
-            gauge_increments = canvas.create_circle_arc(240, 240, 211, style="arc", outline= gauge_color, width=56, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
+            gauge_increments_black = canvas.create_circle_arc(240, 240, 211, style="arc", outline= "black", width=56, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
+            gauge_increments_top = canvas.create_circle_arc(240, 240, 236, style="arc", outline= increment_color, width=10, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
+            gauge_increments_bottom = canvas.create_circle_arc(240, 240, 190, style="arc", outline= increment_color, width=6, start=180 + (gauge_increment*j), end=180 + (gauge_increment*j)-1)
         outer_ring=canvas.create_circle_arc(240, 240, 238, style="arc", outline= increment_color, width=4, start=180 + (gauge_increment*(j-1)), end=180 + (gauge_increment*j ))
         inner_ring=canvas.create_circle_arc(240, 240, 186, style="arc", outline= increment_color, width=2, start=180 + (gauge_increment*(j-1)), end=180 + (gauge_increment*(j) ))
         negative_cover = canvas.create_circle_arc(240, 240, 186, style="arc", outline= "black", width=4, start=220, end= 180 ) # inner ring negative cover 
-        canvas.tag_raise(gauge_increments)
+        #canvas.tag_raise(gauge_increments)
         draw_increments(180 - (gauge_increment*j),j)
     min_boost = canvas.create_text(110, 340, text="-10", fill= "white", font=("Helvetica", 20, 'bold')) # min boost 
     left_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= "white", width=60, start=220, end=222) # left endstop
     right_endstop = canvas.create_circle_arc(240, 240, 215, style="arc", outline= red_zone_color, width=60, start=320, end=318) # right endstop
     fuel_endstop = canvas.create_circle_arc(240, 240, 225, style="arc", outline= "white", width=25, start=max_gauge_fuel, end=max_gauge_fuel -1) # fuel endstop
     boost_text = canvas.create_text(240, 130, text="Boost Pressure (PSI)", fill= "white", font=("Helvetica", 10, 'bold')) # boost text
-    draw_rotated_text(408, 225, '%') # percent of fuel level
+    fuel_percent = draw_rotated_text(408, 225, '%', 20) # percent of fuel level 
+    intake_text = draw_rotated_text(127, 195, 'Intake:', 15) # "intake" text
+    intake_degrees = draw_rotated_text(102, 195, "°C", 15) # "°C" text
+    coolant_text = draw_rotated_text(75, 195, 'Coolant:', 15) # "coolant" text
+    coolant_degrees = draw_rotated_text(47, 195, "°C", 15) # "°C" text
 
 def fuel_gauge(fuel):
     global fuel_bar, fuel_bar_arc
@@ -184,7 +196,7 @@ def fuel_gauge(fuel):
 
 
 root = tk.Tk()
-#root.attributes('-fullscreen', True)
+root.attributes('-fullscreen', True)
 canvas = tk.Canvas(root, width=480, height=480, borderwidth=0, highlightthickness=0,
 bg="black")
 
@@ -228,7 +240,7 @@ def gauge_sweep():
         gauge_sweep_1_bool = True
     elif gauge_sweep_1_start_point > max_gauge:
         gauge_sweep_1_start_point = (gauge_sweep_1_start_point -1)
-        
+        time.sleep(0.004)
         if gauge_sweep_1_start_point ==0:
             lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=50, start=2 , end= 2 -2)
         else:
@@ -236,11 +248,10 @@ def gauge_sweep():
         canvas.update()
         canvas.update_idletasks()
         canvas.delete(lead_arc)
-        
 
     elif gauge_sweep_1_start_point <= max_gauge and gauge_sweep_1_end_point >= max_gauge and gauge_sweep_1_end_point <= min_gauge_negative:
         gauge_sweep_1_end_point = (gauge_sweep_1_end_point + 1)
-      
+        time.sleep(0.004)
         if gauge_sweep_1_end_point ==0:
             lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width=50, start=2 , end= 2 -2)
         else:
@@ -299,7 +310,9 @@ while loop ==True:
             arc_length_4 = round(arc_length_4, 2)
     
         fuel_gauge(fuel_level)
-        fuel_text = draw_rotated_text(417, 225, fuel_level) # text for fuel level
+        fuel_text = draw_rotated_text(417, 225, fuel_level, 20) # text for fuel level
+        intake_value = draw_rotated_text(109, 195, intake_temp, 15) # text for intake
+        coolant_value = draw_rotated_text(54, 195, intake_temp, 15) # text for coolant
     
         if current_value <= min_boost_negative:
             boost_arc_4 = boost_arc_3 = boost_arc_2 = boost_arc_1 = lead_arc = canvas.create_circle_arc(240, 240, 211, style="arc", outline=needle_color, width= 58, start=min_gauge_negative -2, end=min_gauge_negative)
@@ -381,3 +394,5 @@ while loop ==True:
         canvas.delete(fuel_bar)
         canvas.delete(fuel_bar_arc)
         canvas.delete(fuel_text)
+        canvas.delete(intake_value)
+        canvas.delete(coolant_value)
