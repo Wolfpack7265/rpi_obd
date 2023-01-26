@@ -70,7 +70,7 @@ new_value = min_boost_negative
 increment_value = 0
 current_value = 0
 i=0
-increments = 60
+increments = 75
 launch = False
 start_timer_bool = True
 start_time = 0
@@ -396,5 +396,3 @@ while loop ==True:
     canvas.delete(fuel_text)
     #canvas.delete(intake_value)
     #canvas.delete(coolant_value)
-    time.sleep(0.016666)
-    #time.sleep(0.008)
