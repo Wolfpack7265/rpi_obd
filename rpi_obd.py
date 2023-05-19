@@ -79,6 +79,7 @@ liters_remaining = 0
 vehicle = 1
 gears = 0
 current_gear = 0
+saved_current_gear = 0
 mk7_golf_automatic = [0.63246, 4.46, 2.51, 1.56, 1.14, 0.85, 0.67]
 jk_jeep_wrangler = [1, 4.46, 2.61, 1.72, 1.25, 1, 0.767]
 test_car = [1, 1, 2, 3, 4, 5, 6, 7, 8]
@@ -495,7 +496,8 @@ while loop ==True:
     if rpm > 1000 & speed != 0:
         calculated_gear_ratio = ((rpm)*(tire_size)*0.06)/(speed)
         compute_gear_ratio(calculated_gear_ratio)
-        if current_gear != 0:
+        if current_gear != 0 and saved_current_gear != current_gear:
+           saved_current_gear = current_gear
            gear_text = canvas.create_text(240, 240, text=current_gear, fill= "white", font=("Helvetica", 150, 'bold'))  
     else:
         calculated_gear_ratio = 0
@@ -510,7 +512,7 @@ while loop ==True:
     canvas.delete(fuel_bar)
     canvas.delete(fuel_bar_arc)
     canvas.delete(fuel_text)
-    if current_gear != 0:
+    if current_gear != 0 and saved_current_gear != current_gear:
         canvas.delete(gear_text)
     #canvas.delete(intake_value)
     #canvas.delete(coolant_value)
