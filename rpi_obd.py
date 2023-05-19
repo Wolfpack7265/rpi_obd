@@ -492,7 +492,7 @@ while loop ==True:
         canvas.tag_lower(boost_arc_3)
         canvas.tag_lower(boost_arc_4)
     
-    if rpm > 2250 & speed != 0:
+    if rpm > 1500 & speed != 0:
         calculated_gear_ratio = ((rpm)*(tire_size)*0.06)/(speed)
         compute_gear_ratio(calculated_gear_ratio)
         if current_gear != 0:
