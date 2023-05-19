@@ -11,7 +11,7 @@ import tkinter.ttk
 import os 
 import sys
 import math
-from bluetooth import * 
+#from bluetooth import * 
 
 #python3 -m elm -s car
 
@@ -76,27 +76,9 @@ start_timer_bool = True
 start_time = 0
 end_time = 0
 liters_remaining = 0
-vehicle = 1
-gears = 0
-current_gear = 0
-mk7_golf_automatic = [0.63246, 4.46, 2.51, 1.56, 1.14, 0.85, 0.67]
-jk_jeep_wrangler = [1, 4.46, 2.61, 1.72, 1.25, 1, 0.767]
-test_car = [1, 1, 2, 3, 4, 5, 6, 7, 8]
-calculated_gear_ratio = 0
-first_gear = None
-second_gear = None
-third_gear = None
-fourth_gear = None
-fifth_gear = None
-sixth_gear = None
-seventh_gear = None
-eigth_gear = None
-ninth_gear = None
-tenth_gear = None
-tolerance = 0.02
 
-connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
-#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
+#connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
@@ -211,36 +193,10 @@ def fuel_gauge(fuel):
         fuel_bar = canvas.create_circle_arc(240, 240, 225, style="arc", outline= red_zone_color, width=25, start=222, end=arc_length_fuel)
         fuel_bar_arc = canvas.create_circle_arc(240, 240, 225, style="arc", outline="white", width=25, start=arc_length_fuel , end=arc_length_fuel-1)
 
-def compute_gear_ratio(calculated_gear_ratio):
-    global current_gear
-    
-    if first_gear != None and calculated_gear_ratio > (first_gear - tolerance) and calculated_gear_ratio < (first_gear + tolerance):
-        current_gear = 1  
-    elif second_gear != None and calculated_gear_ratio > (second_gear - tolerance) and calculated_gear_ratio < (second_gear + tolerance):
-        current_gear = 2  
-    elif third_gear != None and calculated_gear_ratio > (third_gear - tolerance) and calculated_gear_ratio < (third_gear + tolerance):
-        current_gear = 3  
-    elif fourth_gear != None and calculated_gear_ratio > (fourth_gear - tolerance) and calculated_gear_ratio < (fourth_gear + tolerance):
-        current_gear = 4  
-    elif fifth_gear != None and calculated_gear_ratio > (fifth_gear - tolerance) and calculated_gear_ratio < (fifth_gear + tolerance):
-        current_gear = 5  
-    elif sixth_gear != None and calculated_gear_ratio > (sixth_gear - tolerance) and calculated_gear_ratio < (sixth_gear + tolerance):
-        current_gear = 6  
-    elif seventh_gear != None and calculated_gear_ratio > (seventh_gear - tolerance) and calculated_gear_ratio < (seventh_gear + tolerance):
-        current_gear = 7   
-    elif eigth_gear != None and calculated_gear_ratio > (eigth_gear - tolerance) and calculated_gear_ratio < (eigth_gear + tolerance):
-        current_gear = 8   
-    elif ninth_gear != None and calculated_gear_ratio > (ninth_gear - tolerance) and calculated_gear_ratio < (ninth_gear + tolerance):
-        current_gear = 9  
-    elif tenth_gear != None and calculated_gear_ratio > (tenth_gear - tolerance) and calculated_gear_ratio < (tenth_gear + tolerance):
-        current_gear = 10   
-    else:
-        current_gear = 0
-        
 
 
 root = tk.Tk()
-root.attributes('-fullscreen', True)
+#root.attributes('-fullscreen', True)
 canvas = tk.Canvas(root, width=480, height=480, borderwidth=0, highlightthickness=0,
 bg="black")
 
@@ -326,70 +282,6 @@ connection.query(obd.commands.INTAKE_PRESSURE, force=True)
 connection.query(obd.commands.BAROMETRIC_PRESSURE, force=True)
 
 while loop == False:
-    if vehicle == 1:
-        vehicle = mk7_golf_automatic
-    elif vehicle == 2:
-        vehicle = jk_jeep_wrangler
-    elif vehicle == 3:
-        vehicle = test_car
-    gears = len(vehicle) - 1
-    if gears == 5:
-        tire_size = vehicle[0]
-        first_gear = vehicle[1]
-        second_gear = vehicle[2]
-        third_gear = vehicle[3]
-        fourth_gear = vehicle[4]
-        fifth_gear = vehicle[5]
-    elif gears == 6:
-        tire_size = vehicle[0]
-        first_gear = vehicle[1]
-        second_gear = vehicle[2]
-        third_gear = vehicle[3]
-        fourth_gear = vehicle[4]
-        fifth_gear = vehicle[5]
-        sixth_gear = vehicle[6]
-    elif gears == 7:
-        tire_size = vehicle[0]
-        first_gear = vehicle[1]
-        second_gear = vehicle[2]
-        third_gear = vehicle[3]
-        fourth_gear = vehicle[4]
-        fifth_gear = vehicle[5]
-        sixth_gear = vehicle[6]
-        seventh_gear = vehicle[7]
-    elif gears == 8:
-        tire_size = vehicle[0]
-        first_gear = vehicle[1]
-        second_gear = vehicle[2]
-        third_gear = vehicle[3]
-        fourth_gear = vehicle[4]
-        fifth_gear = vehicle[5]
-        sixth_gear = vehicle[6]
-        seventh_gear = vehicle[7]
-        eigth_gear = vehicle[8]
-    elif gears == 9:
-        tire_size = vehicle[0]
-        first_gear = vehicle[1]
-        second_gear = vehicle[2]
-        third_gear = vehicle[3]
-        fourth_gear = vehicle[4]
-        fifth_gear = vehicle[5]
-        sixth_gear = vehicle[6]
-        seventh_gear = vehicle[7]
-        eigth_gear = vehicle[8]
-        ninth_gear = vehicle[9]
-    elif gears == 10:
-        tire_size = vehicle[0]
-        first_gear = vehicle[1]
-        second_gear = vehicle[2]
-        third_gear = vehicle[3]
-        fourth_gear = vehicle[4]
-        fifth_gear = vehicle[5]
-        sixth_gear = vehicle[6]
-        seventh_gear = vehicle[7]
-        eigth_gear = vehicle[8]
-        ninth_gear = vehicle[9]
-        tenth_gear = vehicle[10]
     gauge_sweep()
    
 while loop ==True:   
@@ -492,14 +384,6 @@ while loop ==True:
         canvas.tag_lower(boost_arc_3)
         canvas.tag_lower(boost_arc_4)
     
-    if rpm > 2250 & speed != 0:
-        calculated_gear_ratio = ((rpm)*(tire_size)*0.06)/(speed)
-        compute_gear_ratio(calculated_gear_ratio)
-        if current_gear != 0:
-           gear_text = canvas.create_text(240, 240, text=current_gear, fill= "white", font=("Helvetica", 150, 'bold'))  
-    else:
-        calculated_gear_ratio = 0
-
     canvas.update()
     canvas.update_idletasks()
     canvas.delete(boost_arc_1)
@@ -510,7 +394,5 @@ while loop ==True:
     canvas.delete(fuel_bar)
     canvas.delete(fuel_bar_arc)
     canvas.delete(fuel_text)
-    if current_gear != 0:
-        canvas.delete(gear_text)
     #canvas.delete(intake_value)
     #canvas.delete(coolant_value)
