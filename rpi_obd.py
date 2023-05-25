@@ -84,7 +84,9 @@ mk7_golf_automatic = [0.63246, 4.46, 2.51, 1.56, 1.14, 0.85, 0.67]
 jk_jeep_wrangler = [1, 4.46, 2.61, 1.72, 1.25, 1, 0.767]
 test_car = [1, 1, 2, 3, 4, 5, 6, 7, 8]
 calculated_gear_ratio = 0
-previous_gear_ratio = 0
+previous_gear = 0
+display_gear = False
+delete_gear = False
 first_gear = None
 second_gear = None
 third_gear = None
@@ -95,7 +97,7 @@ seventh_gear = None
 eigth_gear = None
 ninth_gear = None
 tenth_gear = None
-tolerance = 0.03
+tolerance = 0.05
 
 connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
 #connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
@@ -190,6 +192,8 @@ def draw_passive_elements():
     fuel_endstop = canvas.create_circle_arc(240, 240, 225, style="arc", outline= "white", width=25, start=max_gauge_fuel, end=max_gauge_fuel -1) # fuel endstop
     boost_text = canvas.create_text(240, 130, text="Boost Pressure (PSI)", fill= "white", font=("Helvetica", 10, 'bold')) # boost text
     fuel_percent = draw_rotated_text(408, 225, '%', 20) # percent of fuel level 
+    global gear_text
+    gear_text = canvas.create_text(240, 240, text=current_gear, fill= "black", font=("Helvetica", 1, 'bold'))
     #intake_text = draw_rotated_text(127, 195, 'Intake:', 15) # "intake" text
     #intake_degrees = draw_rotated_text(102, 195, "°C", 15) # "°C" text
     #coolant_text = draw_rotated_text(75, 195, 'Coolant:', 15) # "coolant" text
@@ -494,16 +498,22 @@ while loop ==True:
         canvas.tag_lower(boost_arc_3)
         canvas.tag_lower(boost_arc_4)
     
-    if rpm > 2000:
+    if rpm > 2100 and speed != 0:
         #calculated_gear_ratio = vehicle[random.randint(1, 6)]
         calculated_gear_ratio = ((rpm)*(tire_size)*0.06)/(speed)
         compute_gear_ratio(calculated_gear_ratio)
-        if current_gear != 0:
-           gear_text = canvas.create_text(240, 240, text=current_gear, fill= "white", font=("Helvetica", 120, 'bold'))  
-           
-    else:
-        calculated_gear_ratio = 0
-        gear_text = canvas.create_text(240, 240, text="", fill= "black", font=("Helvetica", 1, 'bold'))  
+        #print(current_gear, previous_gear)
+        if current_gear > 0 and previous_gear != current_gear:
+            previous_gear = current_gear
+            display_gear = True
+        elif current_gear > 0 and previous_gear == current_gear:
+            display_gear = False
+
+        if display_gear == False and delete_gear == False:
+            gear_text = canvas.create_text(240, 240, text=current_gear, fill= "white", font=("Helvetica", 110, 'bold')) 
+            delete_gear = True
+
+    
 
     canvas.update()
     canvas.update_idletasks()
@@ -515,6 +525,9 @@ while loop ==True:
     canvas.delete(fuel_bar)
     canvas.delete(fuel_bar_arc)
     canvas.delete(fuel_text)
-    canvas.delete(gear_text)
+    if display_gear == True:
+        canvas.delete(gear_text)
+        delete_gear = False
     #canvas.delete(intake_value)
     #canvas.delete(coolant_value)
+    #time.sleep(0.005)
