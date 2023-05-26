@@ -498,7 +498,7 @@ while loop ==True:
         canvas.tag_lower(boost_arc_3)
         canvas.tag_lower(boost_arc_4)
     
-    if rpm > 2100 and speed != 0:
+    if speed != 0:
         #calculated_gear_ratio = vehicle[random.randint(1, 6)]
         calculated_gear_ratio = ((rpm)*(tire_size)*0.06)/(speed)
         compute_gear_ratio(calculated_gear_ratio)
@@ -509,7 +509,7 @@ while loop ==True:
         elif current_gear > 0 and previous_gear == current_gear:
             display_gear = False
 
-        if display_gear == False and delete_gear == False:
+        if display_gear == False and delete_gear == False and rpm > 2100:
             gear_text = canvas.create_text(240, 240, text=current_gear, fill= "white", font=("Helvetica", 110, 'bold')) 
             delete_gear = True
 
