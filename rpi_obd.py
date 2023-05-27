@@ -508,9 +508,11 @@ while loop ==True:
             display_gear = True
         elif current_gear > 0 and previous_gear == current_gear:
             display_gear = False
+        else:
+            display_gear = True
 
-        if display_gear == False and delete_gear == False and rpm > 1000:
-            gear_text = canvas.create_text(240, 240, text=current_gear, fill= "white", font=("Helvetica", 110, 'bold')) 
+        if display_gear == False and delete_gear == False:
+            gear_text = canvas.create_text(240, 250, text=current_gear, fill= "white", font=("Helvetica", 110, 'bold')) 
             delete_gear = True
 
     
