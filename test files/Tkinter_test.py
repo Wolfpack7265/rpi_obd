@@ -12,7 +12,7 @@ import os
 import sys
 import math
 import random
-from bluetooth import * 
+##from bluetooth import * 
 
 #python3 -m elm -s car
 
@@ -99,8 +99,8 @@ ninth_gear = None
 tenth_gear = None
 tolerance = 0.05
 
-connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
-#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
+#connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
@@ -246,7 +246,7 @@ def compute_gear_ratio(calculated_gear_ratio):
 
 
 root = tk.Tk()
-root.attributes('-fullscreen', True)
+#root.attributes('-fullscreen', True)
 canvas = tk.Canvas(root, width=480, height=480, borderwidth=0, highlightthickness=0,
 bg="black")
 
@@ -499,8 +499,8 @@ while loop ==True:
         canvas.tag_lower(boost_arc_4)
     
     if speed != 0:
-        #calculated_gear_ratio = vehicle[random.randint(1, 6)]
-        calculated_gear_ratio = ((rpm)*(tire_size)*0.06)/(speed)
+        calculated_gear_ratio = vehicle[random.randint(0, 6)]
+        #calculated_gear_ratio = ((rpm)*(tire_size)*0.06)/(speed)
         compute_gear_ratio(calculated_gear_ratio)
         #print(current_gear, previous_gear)
         if current_gear > 0 and previous_gear != current_gear:
@@ -514,24 +514,10 @@ while loop ==True:
         if display_gear == False and delete_gear == False and current_gear !=0:
             gear_text = canvas.create_text(240, 250, text=current_gear, fill= "white", font=("Helvetica", 110, 'bold')) 
             delete_gear = True
-
-    elif speed == 0:
-        calculated_gear_ratio = 0
-        current_gear = 0
-        if current_gear > 0 and previous_gear != current_gear:
-            previous_gear = current_gear
-            display_gear = True
-        elif current_gear > 0 and previous_gear == current_gear:
-            display_gear = False
-        else:
-            display_gear = True
-
-        if display_gear == False and delete_gear == False and current_gear !=0:
-            gear_text = canvas.create_text(240, 250, text=current_gear, fill= "white", font=("Helvetica", 110, 'bold')) 
-            delete_gear = True    
     
 
     canvas.update()
+    
     canvas.update_idletasks()
     canvas.delete(boost_arc_1)
     canvas.delete(boost_arc_2)
@@ -546,4 +532,4 @@ while loop ==True:
         delete_gear = False
     #canvas.delete(intake_value)
     #canvas.delete(coolant_value)
-    #time.sleep(0.005)
+    time.sleep(0.1)
