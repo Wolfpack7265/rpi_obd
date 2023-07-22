@@ -219,29 +219,118 @@ def fuel_gauge(fuel):
 
 def compute_gear_ratio(calculated_gear_ratio):
     global current_gear
+    difference_lower = 0
+    difference_higher = 0
     
-    if first_gear != None and calculated_gear_ratio > (first_gear - tolerance) and calculated_gear_ratio < (first_gear + tolerance):
-        current_gear = 1  
-    elif second_gear != None and calculated_gear_ratio > (second_gear - tolerance) and calculated_gear_ratio < (second_gear + tolerance):
-        current_gear = 2  
-    elif third_gear != None and calculated_gear_ratio > (third_gear - tolerance) and calculated_gear_ratio < (third_gear + tolerance):
-        current_gear = 3  
-    elif fourth_gear != None and calculated_gear_ratio > (fourth_gear - tolerance) and calculated_gear_ratio < (fourth_gear + tolerance):
-        current_gear = 4  
-    elif fifth_gear != None and calculated_gear_ratio > (fifth_gear - tolerance) and calculated_gear_ratio < (fifth_gear + tolerance):
-        current_gear = 5  
-    elif sixth_gear != None and calculated_gear_ratio > (sixth_gear - tolerance) and calculated_gear_ratio < (sixth_gear + tolerance):
-        current_gear = 6  
-    elif seventh_gear != None and calculated_gear_ratio > (seventh_gear - tolerance) and calculated_gear_ratio < (seventh_gear + tolerance):
-        current_gear = 7   
-    elif eigth_gear != None and calculated_gear_ratio > (eigth_gear - tolerance) and calculated_gear_ratio < (eigth_gear + tolerance):
-        current_gear = 8   
-    elif ninth_gear != None and calculated_gear_ratio > (ninth_gear - tolerance) and calculated_gear_ratio < (ninth_gear + tolerance):
-        current_gear = 9  
-    elif tenth_gear != None and calculated_gear_ratio > (tenth_gear - tolerance) and calculated_gear_ratio < (tenth_gear + tolerance):
-        current_gear = 10   
-    else:
-        current_gear = 0
+    if first_gear != None and calculated_gear_ratio > 0 and calculated_gear_ratio > first_gear:
+        current_gear = 1
+
+    elif second_gear != None and calculated_gear_ratio <= first_gear and calculated_gear_ratio > second_gear:
+        difference_lower = first_gear - calculated_gear_ratio
+        difference_higher = calculated_gear_ratio - second_gear
+
+        if difference_lower < difference_higher:
+            current_gear = 1
+        else:
+            current_gear = 2
+
+    elif third_gear != None and calculated_gear_ratio <= second_gear and calculated_gear_ratio > third_gear:
+        difference_lower = second_gear - calculated_gear_ratio
+        difference_higher = calculated_gear_ratio - third_gear
+
+        if difference_lower < difference_higher:
+            current_gear = 2
+        else:
+            current_gear = 3
+
+    elif fourth_gear != None and calculated_gear_ratio <= third_gear and calculated_gear_ratio > fourth_gear:
+        difference_lower = third_gear - calculated_gear_ratio
+        difference_higher = calculated_gear_ratio - fourth_gear
+        
+        if difference_lower < difference_higher:
+            current_gear = 3
+        else:
+            current_gear = 4
+
+    elif fifth_gear != None and calculated_gear_ratio <= fourth_gear and calculated_gear_ratio > fifth_gear:
+        difference_lower = fourth_gear - calculated_gear_ratio
+        difference_higher = calculated_gear_ratio - fifth_gear
+
+        if difference_lower < difference_higher:
+            current_gear = 4
+        else:
+            current_gear = 5
+
+    elif sixth_gear != None and calculated_gear_ratio <= fifth_gear and calculated_gear_ratio > sixth_gear:
+        difference_lower = fifth_gear - calculated_gear_ratio
+        difference_higher = calculated_gear_ratio - sixth_gear
+
+        if difference_lower < difference_higher:
+            current_gear = 5
+        else:
+            current_gear = 6
+
+    elif seventh_gear != None and calculated_gear_ratio <= sixth_gear and calculated_gear_ratio > seventh_gear:
+        difference_lower = sixth_gear - calculated_gear_ratio
+        difference_higher = calculated_gear_ratio - seventh_gear
+
+        if difference_lower < difference_higher:
+            current_gear = 6
+        else:
+            current_gear = 7
+
+    elif eigth_gear != None and calculated_gear_ratio <= seventh_gear and calculated_gear_ratio > eigth_gear:
+        difference_lower = seventh_gear - calculated_gear_ratio
+        difference_higher = calculated_gear_ratio - eigth_gear
+
+        if difference_lower < difference_higher:
+            current_gear = 7
+        else:
+            current_gear = 8
+    
+    elif ninth_gear != None and calculated_gear_ratio <= eigth_gear and calculated_gear_ratio > ninth_gear:
+        difference_lower = eigth_gear - calculated_gear_ratio
+        difference_higher = calculated_gear_ratio - ninth_gear
+
+        if difference_lower < difference_higher:
+            current_gear = 8
+        else:
+            current_gear = 9
+    elif tenth_gear!= None and calculated_gear_ratio <= ninth_gear and calculated_gear_ratio > tenth_gear:
+        difference_lower = ninth_gear - calculated_gear_ratio
+        difference_higher = calculated_gear_ratio - tenth_gear
+
+        if difference_lower < difference_higher:
+            current_gear = 9
+        else:
+            current_gear = 10
+    
+    elif tenth_gear!= None and calculated_gear_ratio <= tenth_gear:
+        current_gear = 10
+    
+        
+    #if first_gear != None and calculated_gear_ratio > (first_gear - tolerance) and calculated_gear_ratio < (first_gear + tolerance):
+    #    current_gear = 1  
+    #elif second_gear != None and calculated_gear_ratio > (second_gear - tolerance) and calculated_gear_ratio < (second_gear + tolerance):
+    #    current_gear = 2  
+    #elif third_gear != None and calculated_gear_ratio > (third_gear - tolerance) and calculated_gear_ratio < (third_gear + tolerance):
+    #    current_gear = 3  
+    #elif fourth_gear != None and calculated_gear_ratio > (fourth_gear - tolerance) and calculated_gear_ratio < (fourth_gear + tolerance):
+    #    current_gear = 4  
+    #elif fifth_gear != None and calculated_gear_ratio > (fifth_gear - tolerance) and calculated_gear_ratio < (fifth_gear + tolerance):
+    #    current_gear = 5  
+    #elif sixth_gear != None and calculated_gear_ratio > (sixth_gear - tolerance) and calculated_gear_ratio < (sixth_gear + tolerance):
+    #    current_gear = 6  
+    #elif seventh_gear != None and calculated_gear_ratio > (seventh_gear - tolerance) and calculated_gear_ratio < (seventh_gear + tolerance):
+    #    current_gear = 7   
+    #elif eigth_gear != None and calculated_gear_ratio > (eigth_gear - tolerance) and calculated_gear_ratio < (eigth_gear + tolerance):
+    #    current_gear = 8   
+    #elif ninth_gear != None and calculated_gear_ratio > (ninth_gear - tolerance) and calculated_gear_ratio < (ninth_gear + tolerance):
+    #    current_gear = 9  
+    #elif tenth_gear != None and calculated_gear_ratio > (tenth_gear - tolerance) and calculated_gear_ratio < (tenth_gear + tolerance):
+    #    current_gear = 10   
+    #else:
+    #    current_gear = 0
         
 
 
@@ -499,10 +588,11 @@ while loop ==True:
         canvas.tag_lower(boost_arc_4)
     
     if speed != 0:
-        #calculated_gear_ratio = vehicle[random.randint(1, 6)]
+        #calculated_gear_ratio = random.uniform(0.67, 4.46)
         calculated_gear_ratio = ((rpm)*(tire_size)*0.06)/(speed)
         compute_gear_ratio(calculated_gear_ratio)
-        #print(current_gear, previous_gear)
+        #print(calculated_gear_ratio, current_gear)
+        
         if current_gear > 0 and previous_gear != current_gear:
             previous_gear = current_gear
             display_gear = True
@@ -546,4 +636,4 @@ while loop ==True:
         delete_gear = False
     #canvas.delete(intake_value)
     #canvas.delete(coolant_value)
-    #time.sleep(0.005)
+    #time.sleep(0.1)
