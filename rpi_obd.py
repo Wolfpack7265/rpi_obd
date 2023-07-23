@@ -12,7 +12,7 @@ import os
 import sys
 import math
 import random
-from bluetooth import * 
+#from bluetooth import * 
 
 #python3 -m elm -s car
 
@@ -99,8 +99,8 @@ ninth_gear = None
 tenth_gear = None
 tolerance = 0.05
 
-connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
-#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
+#connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
@@ -222,7 +222,7 @@ def compute_gear_ratio(calculated_gear_ratio):
     difference_lower = 0
     difference_higher = 0
     
-    if first_gear != None and calculated_gear_ratio > 0 and calculated_gear_ratio > first_gear:
+    if first_gear != None and calculated_gear_ratio > 0 and calculated_gear_ratio >= first_gear:
         current_gear = 1
 
     elif second_gear != None and calculated_gear_ratio <= first_gear and calculated_gear_ratio > second_gear:
@@ -231,7 +231,7 @@ def compute_gear_ratio(calculated_gear_ratio):
 
         if difference_lower < difference_higher:
             current_gear = 1
-        else:
+        elif difference_lower > difference_higher or (calculated_gear_ratio <= second_gear and third_gear == None):
             current_gear = 2
 
     elif third_gear != None and calculated_gear_ratio <= second_gear and calculated_gear_ratio > third_gear:
@@ -240,7 +240,7 @@ def compute_gear_ratio(calculated_gear_ratio):
 
         if difference_lower < difference_higher:
             current_gear = 2
-        else:
+        elif difference_lower > difference_higher or (calculated_gear_ratio <= third_gear and fourth_gear == None):
             current_gear = 3
 
     elif fourth_gear != None and calculated_gear_ratio <= third_gear and calculated_gear_ratio > fourth_gear:
@@ -249,7 +249,7 @@ def compute_gear_ratio(calculated_gear_ratio):
         
         if difference_lower < difference_higher:
             current_gear = 3
-        else:
+        elif difference_lower > difference_higher or (calculated_gear_ratio <= fourth_gear and fifth_gear == None):
             current_gear = 4
 
     elif fifth_gear != None and calculated_gear_ratio <= fourth_gear and calculated_gear_ratio > fifth_gear:
@@ -258,7 +258,7 @@ def compute_gear_ratio(calculated_gear_ratio):
 
         if difference_lower < difference_higher:
             current_gear = 4
-        else:
+        elif difference_lower > difference_higher or (calculated_gear_ratio <= fifth_gear and sixth_gear == None):
             current_gear = 5
 
     elif sixth_gear != None and calculated_gear_ratio <= fifth_gear and calculated_gear_ratio > sixth_gear:
@@ -267,7 +267,7 @@ def compute_gear_ratio(calculated_gear_ratio):
 
         if difference_lower < difference_higher:
             current_gear = 5
-        else:
+        elif difference_lower > difference_higher or (calculated_gear_ratio <= sixth_gear and seventh_gear == None):
             current_gear = 6
 
     elif seventh_gear != None and calculated_gear_ratio <= sixth_gear and calculated_gear_ratio > seventh_gear:
@@ -276,7 +276,7 @@ def compute_gear_ratio(calculated_gear_ratio):
 
         if difference_lower < difference_higher:
             current_gear = 6
-        else:
+        elif difference_lower > difference_higher or (calculated_gear_ratio <= seventh_gear and eigth_gear == None):
             current_gear = 7
 
     elif eigth_gear != None and calculated_gear_ratio <= seventh_gear and calculated_gear_ratio > eigth_gear:
@@ -285,7 +285,7 @@ def compute_gear_ratio(calculated_gear_ratio):
 
         if difference_lower < difference_higher:
             current_gear = 7
-        else:
+        elif difference_lower > difference_higher or (calculated_gear_ratio <= eigth_gear and ninth_gear == None):
             current_gear = 8
     
     elif ninth_gear != None and calculated_gear_ratio <= eigth_gear and calculated_gear_ratio > ninth_gear:
@@ -294,7 +294,7 @@ def compute_gear_ratio(calculated_gear_ratio):
 
         if difference_lower < difference_higher:
             current_gear = 8
-        else:
+        elif difference_lower > difference_higher or (calculated_gear_ratio <= ninth_gear and tenth_gear == None):
             current_gear = 9
     elif tenth_gear!= None and calculated_gear_ratio <= ninth_gear and calculated_gear_ratio > tenth_gear:
         difference_lower = ninth_gear - calculated_gear_ratio
@@ -302,11 +302,11 @@ def compute_gear_ratio(calculated_gear_ratio):
 
         if difference_lower < difference_higher:
             current_gear = 9
-        else:
+        elif difference_lower > difference_higher or calculated_gear_ratio <= tenth_gear:
             current_gear = 10
+    else:
+        current_gear = previous_gear
     
-    elif tenth_gear!= None and calculated_gear_ratio <= tenth_gear:
-        current_gear = 10
     
         
     #if first_gear != None and calculated_gear_ratio > (first_gear - tolerance) and calculated_gear_ratio < (first_gear + tolerance):
@@ -335,7 +335,7 @@ def compute_gear_ratio(calculated_gear_ratio):
 
 
 root = tk.Tk()
-root.attributes('-fullscreen', True)
+#root.attributes('-fullscreen', True)
 canvas = tk.Canvas(root, width=480, height=480, borderwidth=0, highlightthickness=0,
 bg="black")
 
@@ -588,10 +588,10 @@ while loop ==True:
         canvas.tag_lower(boost_arc_4)
     
     if speed != 0:
-        #calculated_gear_ratio = random.uniform(0.67, 4.46)
-        calculated_gear_ratio = ((rpm)*(tire_size)*0.06)/(speed)
+        calculated_gear_ratio = random.uniform(0.1, 5)
+        #calculated_gear_ratio = ((rpm)*(tire_size)*0.06)/(speed)
         compute_gear_ratio(calculated_gear_ratio)
-        #print(calculated_gear_ratio, current_gear)
+        print(calculated_gear_ratio, current_gear)
         
         if current_gear > 0 and previous_gear != current_gear:
             previous_gear = current_gear
@@ -636,4 +636,4 @@ while loop ==True:
         delete_gear = False
     #canvas.delete(intake_value)
     #canvas.delete(coolant_value)
-    #time.sleep(0.1)
+    time.sleep(0.1)
