@@ -12,7 +12,7 @@ import os
 import sys
 import math
 import random
-#from bluetooth import * 
+from bluetooth import * 
 
 #python3 -m elm -s car
 
@@ -99,8 +99,8 @@ ninth_gear = None
 tenth_gear = None
 tolerance = 0.05
 
-#connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
-connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
+connection = obd.Async(portstr="/dev/rfcomm0", baudrate=None, protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False)
+#connection = obd.Async(portstr="COM4", baudrate="38400", protocol=None, fast=True, timeout=0.1, check_voltage=True, start_low_power=False) 
 
 def intake_pressure_tracker(a):
     global intake
@@ -335,7 +335,7 @@ def compute_gear_ratio(calculated_gear_ratio):
 
 
 root = tk.Tk()
-#root.attributes('-fullscreen', True)
+root.attributes('-fullscreen', True)
 canvas = tk.Canvas(root, width=480, height=480, borderwidth=0, highlightthickness=0,
 bg="black")
 
@@ -636,4 +636,4 @@ while loop ==True:
         delete_gear = False
     #canvas.delete(intake_value)
     #canvas.delete(coolant_value)
-    time.sleep(0.1)
+    #time.sleep(0.1)
