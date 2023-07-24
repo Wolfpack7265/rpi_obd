@@ -588,10 +588,10 @@ while loop ==True:
         canvas.tag_lower(boost_arc_4)
     
     if speed != 0:
-        calculated_gear_ratio = random.uniform(0.1, 5)
-        #calculated_gear_ratio = ((rpm)*(tire_size)*0.06)/(speed)
+        #calculated_gear_ratio = random.uniform(0.1, 5)
+        calculated_gear_ratio = ((rpm)*(tire_size)*0.06)/(speed)
         compute_gear_ratio(calculated_gear_ratio)
-        print(calculated_gear_ratio, current_gear)
+        #print(calculated_gear_ratio, current_gear)
         
         if current_gear > 0 and previous_gear != current_gear:
             previous_gear = current_gear
